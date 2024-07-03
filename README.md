@@ -1,8 +1,9 @@
 # hhplus_3rd_concert
 항해플러스 3주차 과제 : 콘서트 예매 서버 구축
 
+<br><br>
 
-### 설계 문서 
+## 설계 문서 
 
 <details>
   <summary>마일스톤</summary>
