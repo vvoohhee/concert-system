@@ -12,8 +12,8 @@ sequenceDiagram
     title 콘서트 예약 가능 날짜, 좌석 조회 다이어그램
     actor 사용자
     participant 대기열
-    participant concertapi as GET /api/concert
-    participant seatapi as GET /api/concert/{optionId}/seat
+    participant concertapi as GET /api/concert/{concertId}/option
+    participant seatapi as GET /api/concert/{concertId}/option/{optionId}/seat
     participant 콘서트
     participant 좌석
     

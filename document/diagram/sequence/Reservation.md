@@ -13,7 +13,7 @@
 
 ```mermaid
 sequenceDiagram
-    title 콘서트 예약 가능 날짜, 좌석 조회 다이어그램
+    title 좌석 예약, 결제 다이어그램
     actor 사용자
     participant reserveapi as GET /api/concert/reserve
     participant paymentapi as GET /api/concert/payment

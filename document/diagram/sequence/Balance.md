@@ -12,7 +12,7 @@
 sequenceDiagram
     title 유저 잔액 조회, 충전 다이어그램
     actor 사용자
-    participant getapi as GET /api/balance
+    participant getapi as GET /api/balance/{userId}
     participant postapi as POST /api/balance
     participant 잔액
     participant 유저
