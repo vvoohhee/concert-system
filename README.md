@@ -9,7 +9,7 @@
 
 ### 1. 마일스톤
 
-![Example Image](https://file.notion.so/f/f/f176477e-aef6-4829-a5f2-5719e9b5edc2/da19f1ed-ab93-4b3d-bc7b-87f878bd5acd/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2024-07-05_%E1%84%8B%E1%85%A9%E1%84%8C%E1%85%A5%E1%86%AB_12.34.07.png?id=21879b15-ef8b-4125-ae50-65b58de9ae54&table=block&spaceId=f176477e-aef6-4829-a5f2-5719e9b5edc2&expirationTimestamp=1720202400000&signature=7fea8o24p7NOvTnzRo4fAMjGjRaGAaRiKKnOMjlZDL0&downloadName=%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA+2024-07-05+%E1%84%8B%E1%85%A9%E1%84%8C%E1%85%A5%E1%86%AB+12.34.07.png)
+<img width="1402" alt="마일스톤" src="https://github.com/vvoohhee/hhplus_3rd_concert/assets/150509394/9b255ff8-d600-4d19-b466-9867820ce06e">
 
 <br><br>
 
@@ -188,7 +188,7 @@ sequenceDiagram
 
 ### ERD
 
-![Example Image](https://file.notion.so/f/f/f176477e-aef6-4829-a5f2-5719e9b5edc2/b6d00e68-4c82-4f29-b205-c782249b386d/ERD_%E1%84%8E%E1%85%AC%E1%84%8C%E1%85%A9%E1%86%BC.png?id=f0bcd7f2-5559-40d5-bf91-f6ba96ead973&table=block&spaceId=f176477e-aef6-4829-a5f2-5719e9b5edc2&expirationTimestamp=1720202400000&signature=GJLvq3lWMcl7ycBGs1el_x1IruZsvoRop87OOXejGpA&downloadName=ERD_%E1%84%8E%E1%85%AC%E1%84%8C%E1%85%A9%E1%86%BC.png)
+![ERD_최종](https://github.com/vvoohhee/hhplus_3rd_concert/assets/150509394/3c6b1ba9-a0be-4d84-ac30-1324aab15820)
 
 <br><br>
 ### API 명세서
