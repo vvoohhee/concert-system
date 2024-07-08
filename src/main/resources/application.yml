@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: concert
+  datasource:
+    driver-class-name:
+    url: jdbc:mysql://localhost:3306/concert
+    username: root
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create
