@@ -5,10 +5,10 @@ import java.util.List;
 
 public class ConcertOptionListDto {
     public record Response(
-            List<ConcertOption> concertOptionList
+            List<ConcertOptionDto> concertOptionDtoList
     ) {}
 
-    public record ConcertOption(
+    public record ConcertOptionDto(
             Long concertOptionId,
             String name,
             int seatQuantity,

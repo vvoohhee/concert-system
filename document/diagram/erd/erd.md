@@ -5,7 +5,7 @@ erDiagram
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
-    
+
     BALANCE {
         BIGINT id PK
         BIGINT user_id
@@ -57,9 +57,9 @@ erDiagram
         INT number "좌석 번호"
         TINYINT status "좌석 예매 상태"
     }
-    
-    %% 이선좌인 경우에만 조회할 테이블
-    %% 5분 초과 시 예매 취소
+
+%% 이선좌인 경우에만 조회할 테이블
+%% 5분 초과 시 예매 취소
     RESERVATION {
         BIGINT id PK
         BIGINT seat_id
@@ -67,8 +67,8 @@ erDiagram
         BIGINT reserved_at "예매한 일시"
     }
 
-    %% 결제까지 완료되어야 생성됨
-    %% 예약(이선좌) 관리는 status 컬럼으로 관리 => 낙관적 락
+%% 결제까지 완료되어야 생성됨
+%% 예약(이선좌) 관리는 status 컬럼으로 관리 => 낙관적 락
     TICKET {
         BIGINT id PK
         BIGINT seat_id
@@ -82,7 +82,7 @@ erDiagram
         TIMESTAMP updated_at
     }
 
-    PAYMENT_HISTORY {
+    PAYMENT {
         BIGINT id PK
         BIGINT ticket_id
         INT amount "결제 금액"
@@ -97,5 +97,5 @@ erDiagram
     CONCERT_OPTION ||--|{ SEAT: "has"
     SEAT ||--o{ TICKET: "has"
     USER ||--o{ TICKET: "owns"
-    TICKET ||--|{ PAYMENT_HISTORY: "has"
+    TICKET ||--|{ PAYMENT: "has"
 ```

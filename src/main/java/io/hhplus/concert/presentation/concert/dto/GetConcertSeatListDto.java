@@ -3,7 +3,7 @@ package io.hhplus.concert.presentation.concert.dto;
 import java.util.List;
 
 public class GetConcertSeatListDto {
-    public record Seat(
+    public record SeatDto(
             Long id,
             int number,
             int status
@@ -11,6 +11,6 @@ public class GetConcertSeatListDto {
 
     public record Response(
             Long concertOptionId,
-            List<Seat> seatList
+            List<SeatDto> seatDtoList
     ) {}
 }
