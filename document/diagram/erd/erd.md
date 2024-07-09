@@ -24,10 +24,10 @@ erDiagram
     USER_TOKEN {
         BIGINT id PK
         BIGINT user_id
-        VARCHAR token "대기열 토큰값"
-        INT position "현재 대기 순서"
+        VARCHAR token "대기열 토큰값 (UNIQUE)"
         TINYINT status "현재 대기 상태"
         TIMESTAMP created_at
+        TIMESTAMP expire_at
     }
 
     CONCERT {
