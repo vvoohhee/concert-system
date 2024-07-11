@@ -7,6 +7,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class TokenService {
@@ -50,5 +52,24 @@ public class TokenService {
         token.setPosition(token.getId(), first);
 
         return token;
+    }
+
+    /**
+     * 토큰이 API 요청할 수 있는 (처리가능한) 상태인지 확인
+     *
+     * @param authorization 토큰
+     * @return boolean 가능 여부
+     */
+    public boolean isAvailable(String authorization) {
+        Token token = tokenRepository.findByToken(authorization).orElseThrow(() -> new NotFoundException("토큰 조회 실패"));
+
+        return token.getStatus().equals(TokenStatusType.AVAILABLE)
+                && token.getAvailableAt().isBefore(LocalDateTime.now())
+                && token.getExpireAt().isAfter(LocalDateTime.now());
+    }
+
+    public void requestApi(String authorization) {
+        Token token = tokenRepository.findByToken(authorization).orElseThrow(() -> new NotFoundException("토큰 조회 실패"));
+        token.setLastRequestAt(LocalDateTime.now());
     }
 }
