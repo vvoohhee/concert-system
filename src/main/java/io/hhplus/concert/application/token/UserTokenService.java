@@ -1,9 +1,8 @@
 package io.hhplus.concert.application.token;
 
-import io.hhplus.concert.presentation.token.dto.IssueTokenDto;
-import io.hhplus.concert.presentation.token.dto.TokenStatusDto;
+import io.hhplus.concert.domain.token.TokenInfo;
 
 public interface UserTokenService {
-    IssueTokenDto.Response issueUserToken(IssueTokenDto.Request request);
-    TokenStatusDto.Response findUserToken(String authorization);
+    TokenInfo issueUserToken(Long userId);
+    TokenInfo findUserToken(String authorization);
 }

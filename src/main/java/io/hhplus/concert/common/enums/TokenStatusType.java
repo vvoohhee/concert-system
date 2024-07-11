@@ -2,9 +2,8 @@ package io.hhplus.concert.common.enums;
 
 public enum TokenStatusType {
     WAITING(0),
-    PENDING(1),
-    DONE(2),
-    EXPIRED(3);
+    AVAILABLE(1),
+    EXPIRED(2);
 
     private final int value;
 

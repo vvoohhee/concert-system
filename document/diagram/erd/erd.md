@@ -27,7 +27,9 @@ erDiagram
         VARCHAR token "대기열 토큰값 (UNIQUE)"
         TINYINT status "현재 대기 상태"
         TIMESTAMP created_at
-        TIMESTAMP expire_at
+        TIMESTAMP available_at "처리가능 일시"
+        TIMESTAMP expire_at "처리종료 일시 (=토큰만료)"
+        TIMESTAMP last_request_at "마지막 API 요청 일시"
     }
 
     CONCERT {

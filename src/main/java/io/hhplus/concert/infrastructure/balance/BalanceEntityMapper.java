@@ -1,9 +1,11 @@
 package io.hhplus.concert.infrastructure.balance;
 
 import io.hhplus.concert.domain.balance.Balance;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+@Component
 public class BalanceEntityMapper {
     public Optional<Balance> toDomain(Optional<BalanceEntity> entity) {
         return entity.map(e ->

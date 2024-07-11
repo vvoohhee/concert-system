@@ -1,18 +1,28 @@
 package io.hhplus.concert.infrastructure.token;
 
 import io.hhplus.concert.common.enums.TokenStatusType;
+import io.hhplus.concert.domain.token.Token;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
-public interface TokenJpaRepository extends JpaRepository<TokenEntity, Long> {
-    TokenEntity findByToken(String token);
-    TokenEntity save(TokenEntity token);
+public interface TokenJpaRepository extends JpaRepository<Token, Long> {
+    Optional<Token> findByToken(String token);
+
+    List<Token> findByStatus(TokenStatusType status);
+
+    List<Token> findByStatusAndExpireAtBefore(TokenStatusType status, LocalDateTime expireAt);
+
+    List<Token> findByStatusAndAvailableAtBefore(TokenStatusType status, LocalDateTime expireAt);
+
+    Token saveAndFlush(Token token);
+
     @Query("SELECT t.id " +
-            "FROM TokenEntity t " +
+            "FROM Token t " +
             "WHERE t.status = io.hhplus.concert.common.enums.TokenStatusType.WAITING " +
-            "ORDER BY t.id DESC")
-    Optional<Long> findFirstPositionIdOrderByIdDesc();
+            "ORDER BY t.id ASC")
+    Optional<Long> findFirstPositionId();
 }
