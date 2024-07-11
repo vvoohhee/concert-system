@@ -1,6 +1,7 @@
 package io.hhplus.concert.domain.concert.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "concert_option")
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class ConcertOption {
 
@@ -74,33 +76,11 @@ public class ConcertOption {
         this.reserveUntil = reserveUntil;
     }
 
-    public ConcertOption(Long concertId, Integer price, LocalDateTime reserveFrom, LocalDateTime reserveUntil) {
-        validateId(concertId);
-
-        this.concertId = concertId;
-        this.price = price;
-        this.seatQuantity = DEFAULT_SEAT_QUANTITY;
-        this.purchaseLimit = DEFAULT_PURCHASE_LIMIT;
-        this.reserveFrom = reserveFrom;
-        this.reserveUntil = reserveUntil;
-    }
-
     public ConcertOption(Long id, Long concertId, Integer price, Integer purchaseLimit, LocalDateTime reserveFrom, LocalDateTime reserveUntil) {
         validateId(id);
         validateId(concertId);
 
         this.id = id;
-        this.concertId = concertId;
-        this.price = price;
-        this.seatQuantity = DEFAULT_SEAT_QUANTITY;
-        this.purchaseLimit = purchaseLimit;
-        this.reserveFrom = reserveFrom;
-        this.reserveUntil = reserveUntil;
-    }
-
-    public ConcertOption(Long concertId, Integer price, Integer purchaseLimit, LocalDateTime reserveFrom, LocalDateTime reserveUntil) {
-        validateId(concertId);
-
         this.concertId = concertId;
         this.price = price;
         this.seatQuantity = DEFAULT_SEAT_QUANTITY;

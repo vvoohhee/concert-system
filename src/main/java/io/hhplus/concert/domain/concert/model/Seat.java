@@ -3,6 +3,7 @@ package io.hhplus.concert.domain.concert.model;
 import io.hhplus.concert.common.enums.ReservationStatusType;
 import io.hhplus.concert.common.exception.CustomException;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Seat {
 
     @Id

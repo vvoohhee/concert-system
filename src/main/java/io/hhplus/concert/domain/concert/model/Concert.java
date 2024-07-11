@@ -31,8 +31,6 @@ public class Concert {
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
-    private List<ConcertOption> options;
-
     public Concert(Long id, String title, LocalDateTime createdAt, LocalDateTime updatedAt) {
         if(Objects.isNull(id)) throw new IllegalArgumentException("유효하지 않은 콘서트 아이디");
 

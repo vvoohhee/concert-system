@@ -1,5 +1,6 @@
 package io.hhplus.concert.presentation.concert.dto;
 
+import io.hhplus.concert.common.enums.ReservationStatusType;
 import io.hhplus.concert.domain.concert.dto.SeatInfo;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class GetConcertSeatListDto {
     public record SeatDto(
             Long id,
             int number,
-            int status
+            ReservationStatusType status
     ) {
     }
 }
