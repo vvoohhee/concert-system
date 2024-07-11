@@ -16,12 +16,15 @@ public class TokenController {
 
     @PostMapping("/issue")
     public ResponseEntity<IssueTokenDto.Response> issue(@RequestBody IssueTokenDto.Request request) {
-        return ResponseEntity.ok(userTokenService.issueUserToken(request));
+        return ResponseEntity.ok(
+                IssueTokenDto.Response.of(userTokenService.issueUserToken(request.userId()))
+        );
     }
-
 
     @GetMapping("/status")
     public ResponseEntity<TokenStatusDto.Response> find(@RequestHeader("Authorization") String authorization) {
-        return ResponseEntity.ok(userTokenService.findUserToken(authorization));
+        return ResponseEntity.ok(
+                TokenStatusDto.Response.of(userTokenService.findUserToken(authorization))
+        );
     }
 }

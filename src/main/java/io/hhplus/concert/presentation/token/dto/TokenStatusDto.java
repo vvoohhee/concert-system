@@ -1,10 +1,14 @@
 package io.hhplus.concert.presentation.token.dto;
 
 import io.hhplus.concert.common.enums.TokenStatusType;
+import io.hhplus.concert.domain.token.TokenInfo;
 
-import java.time.LocalDateTime;
 
 public class TokenStatusDto {
-    public record Response(String token, TokenStatusType status, int position, LocalDateTime expiresAt) {}
+    public record Response(TokenStatusType status, int position) {
+        public static Response of(TokenInfo token) {
+            return new Response(token.status(), token.position());
+        }
+    }
 
 }

@@ -1,9 +1,11 @@
 package io.hhplus.concert.domain.token;
 
+import io.hhplus.concert.common.enums.TokenStatusType;
+import io.hhplus.concert.common.exception.CustomException;
+import io.hhplus.concert.common.exception.NotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -11,23 +13,42 @@ public class TokenService {
 
     private final TokenRepository tokenRepository;
 
+    /**
+     * 토큰 발급 메서드
+     *
+     * @param userId 유저의 PK
+     * @return Token (발급된 토큰)
+     */
+    @Transactional
     public Token issue(Long userId) {
+        // 토큰의 기본 정보를 생성 후 DB에 저장 (처리시간, 만료시간 제외)
         Token token = new Token(userId);
-        return tokenRepository.save(token);
-    }
+        token = tokenRepository.save(token);
 
-    public Token find(String tokenString) {
-        Token token = tokenRepository.findByToken(tokenString);
-        Long first = tokenRepository.findFirstPositionIdOrderByIdDesc().orElse(0L);
-        token.setPosition(token.getId(), first);
+        // 현재 대기열 첫 순번인 토큰의 ID 조회
+        Long firstPositionId = tokenRepository.findFirstPositionId().orElseThrow(() -> new NotFoundException("토큰 조회 실패"));
+
+        // 생성된 사용자 토큰의 대기순번, 처리시간, 만료시간을 설정
+        token.setPosition(token.getId(), firstPositionId);
+        token.setAvailableAtAndExpireAt();
+
         return token;
     }
 
-    // 만료된 토큰을 어떻게 처리할 것인가?
-    public void expire() {
-        List<Token> tokens = tokenRepository.findAll();
-        for (Token token : tokens) token.expire();
+    /**
+     * 토큰 조회 메서드
+     *
+     * @param tokenString 토큰 UUID
+     * @return Token
+     */
+    public Token find(String tokenString) {
+        Token token = tokenRepository.findByToken(tokenString).orElseThrow(() -> new NotFoundException("토큰 조회 실패"));
 
-        tokenRepository.saveAll(tokens);
+        if (token.getStatus().equals(TokenStatusType.EXPIRED)) throw new CustomException("만료된 토큰");
+
+        Long first = tokenRepository.findFirstPositionId().orElseThrow(() -> new NotFoundException("토큰 조회 실패"));
+        token.setPosition(token.getId(), first);
+
+        return token;
     }
 }

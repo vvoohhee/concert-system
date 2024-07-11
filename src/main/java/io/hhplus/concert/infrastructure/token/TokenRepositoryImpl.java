@@ -1,10 +1,12 @@
 package io.hhplus.concert.infrastructure.token;
 
+import io.hhplus.concert.common.enums.TokenStatusType;
 import io.hhplus.concert.domain.token.Token;
 import io.hhplus.concert.domain.token.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,39 +14,46 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TokenRepositoryImpl implements TokenRepository {
 
-    private final TokenEntityMapper mapper;
     private final TokenJpaRepository tokenJpaRepository;
 
     @Override
-    public Token findByToken(String token) {
-        return mapper.toDomain(
-                tokenJpaRepository.findByToken(token)
-        );
+    public Optional<Token> findByToken(String token) {
+        return tokenJpaRepository.findByToken(token);
+    }
+
+    @Override
+    public List<Token> findByStatus(TokenStatusType status) {
+        return tokenJpaRepository.findByStatus(status);
+    }
+
+    @Override
+    public List<Token> findByStatusAndExpireAtBefore(TokenStatusType status, LocalDateTime expireAt) {
+        return tokenJpaRepository.findByStatusAndExpireAtBefore(status, expireAt);
+    }
+
+    @Override
+    public List<Token> findByStatusAndAvailableAtBefore(TokenStatusType status, LocalDateTime availableAt) {
+        return tokenJpaRepository.findByStatusAndAvailableAtBefore(status, availableAt);
+    }
+
+    @Override
+    public Optional<Long> findFirstPositionId() {
+        return tokenJpaRepository.findFirstPositionId();
     }
 
     @Override
     public Token save(Token token) {
-        return mapper.toDomain(
-                tokenJpaRepository.save(mapper.toEntity(token))
-        );
-    }
-
-    @Override
-    public Optional<Long> findFirstPositionIdOrderByIdDesc() {
-        return tokenJpaRepository.findFirstPositionIdOrderByIdDesc();
+        return tokenJpaRepository.saveAndFlush(token);
     }
 
     @Override
     public List<Token> findAll() {
-        return tokenJpaRepository.findAll().stream()
-                .map(mapper::toDomain)
-                .toList();
+        return tokenJpaRepository.findAll();
     }
 
     @Override
     public List<Token> saveAll(List<Token> tokens) {
-        List<TokenEntity> entities = tokens.stream().map(mapper::toEntity).toList();
-        return tokenJpaRepository.saveAll(entities).stream().map(mapper::toDomain).toList();
+        return tokenJpaRepository.saveAll(tokens);
     }
 
 
