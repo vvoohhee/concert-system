@@ -1,28 +1,60 @@
-package io.hhplus.concert.domain.concert;
+package io.hhplus.concert.domain.concert.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table(name = "concert_option")
+@NoArgsConstructor
 @Getter
 public class ConcertOption {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "concert_id", nullable = false)
     private Long concertId;
+
+    @Column(name = "price")
     private Integer price;
+
+    @Column(name = "seat_quantity", nullable = false)
     private Integer seatQuantity;
+
+    @Column(name = "purchase_limit")
     private Integer purchaseLimit;
+
+    @Column(name = "reserve_from", nullable = false)
     private LocalDateTime reserveFrom;
+
+    @Column(name = "reserve_until", nullable = false)
     private LocalDateTime reserveUntil;
+
+    @Column(name = "start_at")
     private LocalDateTime startAt;
+
+    @Column(name = "end_at")
     private LocalDateTime endAt;
+
+    @Column(name = "created_at",
+            nullable = false,
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    private List<Seat> seats;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "concert_id", referencedColumnName = "id", nullable = false)
+    private Concert concert;
 
     public static int DEFAULT_SEAT_QUANTITY = 50;
+
     public static int DEFAULT_PURCHASE_LIMIT = 10;
 
     private void validateId(Long id) {
@@ -75,12 +107,6 @@ public class ConcertOption {
         this.purchaseLimit = purchaseLimit;
         this.reserveFrom = reserveFrom;
         this.reserveUntil = reserveUntil;
-    }
-
-    public void createSeat() {
-        for (int number = 1; number <= seatQuantity; number++) {
-            seats.add(new Seat(id, number));
-        }
     }
 
     public boolean canReserve() {
