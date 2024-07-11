@@ -14,4 +14,10 @@ public interface ConcertOptionJpaRepository extends JpaRepository<ConcertOption,
             "WHERE co.reserveFrom < :reserveAt " +
             "AND co.reserveUntil > :reserveAt")
     List<ConcertOption> findAvailableConcertOptions(LocalDateTime reserveAt);
+
+    @Query("SELECT co " +
+            "FROM ConcertOption co " +
+            "JOIN Seat s ON s.concertOptionId = co.id " +
+            "WHERE s.id = :seatId")
+    ConcertOption findTopBySeatId(Long seatId);
 }

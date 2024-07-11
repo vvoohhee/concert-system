@@ -1,13 +1,9 @@
 package io.hhplus.concert.domain.concert;
 
 import io.hhplus.concert.application.concert.UserConcertFacade;
-import io.hhplus.concert.common.enums.ReservationStatusType;
-import io.hhplus.concert.common.enums.TokenStatusType;
-import io.hhplus.concert.domain.concert.ConcertService;
 import io.hhplus.concert.domain.concert.dto.ConcertOptionInfo;
 import io.hhplus.concert.domain.concert.dto.ReservationInfo;
 import io.hhplus.concert.domain.concert.dto.SeatInfo;
-import io.hhplus.concert.domain.concert.model.Reservation;
 import io.hhplus.concert.domain.token.Token;
 import io.hhplus.concert.domain.token.TokenService;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UserConcertFacadeTest {
+public class ConcertIntegrationTest {
 
     @Mock
     private TokenService tokenService;
@@ -40,8 +36,7 @@ public class UserConcertFacadeTest {
 
     @BeforeEach
     public void setUp() {
-        // Mock tokenService의 동작 설정
-        Token mockToken = new Token(1L); // 예시 토큰 객체
+        Token mockToken = new Token(1L);
         tokenString = mockToken.toString();
         when(tokenService.find(mockToken.getToken())).thenReturn(mockToken);
     }
@@ -69,8 +64,7 @@ public class UserConcertFacadeTest {
 
         // Then
         assertThat(result).isNotNull();
-        assertThat(result).hasSize(2); // 예상되는 결과 크기로 확인
-        // 추가적인 검증 로직을 여기에 추가할 수 있습니다.
+        assertThat(result).hasSize(2);
     }
 
     @Test
@@ -83,7 +77,6 @@ public class UserConcertFacadeTest {
 
         // Then
         assertThat(result).isNotNull();
-        assertThat(result).hasSize(2); // 예상되는 결과 크기로 확인
-        // 추가적인 검증 로직을 여기에 추가할 수 있습니다.
+        assertThat(result).hasSize(2);
     }
 }

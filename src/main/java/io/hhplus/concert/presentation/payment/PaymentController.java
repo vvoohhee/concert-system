@@ -1,6 +1,10 @@
 package io.hhplus.concert.presentation.payment;
 
+import io.hhplus.concert.application.payment.UserPaymentService;
 import io.hhplus.concert.presentation.concert.dto.ConcertPaymentDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,23 +18,17 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/payment")
+@RequiredArgsConstructor
+@Tag(name = "Payment", description = "콘서트 결제 관련 API")
 public class PaymentController {
-    @PostMapping("/seat")
-    public ResponseEntity<ConcertPaymentDto.Response> processPayment(
-            @RequestHeader("Authorization") String authorization) {
-        // Mock 데이터 생성
-        List<ConcertPaymentDto.Ticket> ticketList = new ArrayList<>();
-        ticketList.add(new ConcertPaymentDto.Ticket(
-                1L,
-                new ConcertPaymentDto.ConcertInfo(1L, 50000, LocalDateTime.now(), LocalDateTime.now()),
-                new ConcertPaymentDto.SeatInfo(101L, 1)
-        ));
 
-        // 결제 결과 생성
-        int status = 0; // 성공 상태 코드
-        String description = "Payment successful"; // 상태 설명
+    private final UserPaymentService userPaymentService;
 
-        ConcertPaymentDto.Response response = new ConcertPaymentDto.Response(status, description, ticketList);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    @PostMapping("/seats")
+    @Operation(summary = "콘서트 티켓 결제", description = "예약한 콘서트 티켓을 결제")
+    public ResponseEntity<ConcertPaymentDto.Response> billing(@RequestHeader("Authorization") String authorization) {
+        return ResponseEntity.ok(
+                ConcertPaymentDto.Response.of(userPaymentService.billing(authorization))
+        );
     }
 }

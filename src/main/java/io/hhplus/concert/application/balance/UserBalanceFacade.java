@@ -1,13 +1,10 @@
 package io.hhplus.concert.application.balance;
 
 import io.hhplus.concert.common.enums.BalanceHistoryType;
-import io.hhplus.concert.domain.balance.BalanceHistory;
-import io.hhplus.concert.domain.balance.BalanceHistoryRepository;
 import io.hhplus.concert.domain.balance.BalanceHistoryService;
 import io.hhplus.concert.domain.balance.BalanceService;
-import io.hhplus.concert.domain.balance.command.FindBalanceResponseCommand;
 import io.hhplus.concert.domain.balance.command.RechargeRequestCommand;
-import io.hhplus.concert.domain.balance.command.RechargeResponseCommand;
+import io.hhplus.concert.domain.balance.command.RechargeResponse;
 import io.hhplus.concert.domain.balance.command.SaveBalanceHistoryRequestCommand;
 import io.hhplus.concert.presentation.balance.dto.FindBalanceDto;
 import io.hhplus.concert.presentation.balance.dto.RechargeBalanceDto;
@@ -30,7 +27,7 @@ public class UserBalanceFacade implements UserBalanceService {
     @Override
     @Transactional
     public RechargeBalanceDto.Response recharge(Long userId, Integer amount) {
-        RechargeResponseCommand rechargeResult = balanceService.recharge(new RechargeRequestCommand(userId, amount));
+        RechargeResponse rechargeResult = balanceService.recharge(new RechargeRequestCommand(userId, amount));
 
         SaveBalanceHistoryRequestCommand saveHistoryRequest = new SaveBalanceHistoryRequestCommand(rechargeResult.id(), amount, BalanceHistoryType.RECHARGE);
         balanceHistoryService.save(saveHistoryRequest);
