@@ -1,7 +1,7 @@
 package io.hhplus.concert.presentation.balance.dto;
 
 import io.hhplus.concert.domain.balance.command.RechargeRequestCommand;
-import io.hhplus.concert.domain.balance.command.RechargeResponseCommand;
+import io.hhplus.concert.domain.balance.command.RechargeResponse;
 
 public class RechargeBalanceDto {
     public record Request(
@@ -17,7 +17,7 @@ public class RechargeBalanceDto {
         return new RechargeRequestCommand(request.userId, request.amount);
     }
 
-    public static RechargeBalanceDto.Response of(RechargeResponseCommand command) {
+    public static RechargeBalanceDto.Response of(RechargeResponse command) {
         return new RechargeBalanceDto.Response(command.balance());
     }
 

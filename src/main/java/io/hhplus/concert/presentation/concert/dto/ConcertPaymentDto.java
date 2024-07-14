@@ -1,30 +1,32 @@
 package io.hhplus.concert.presentation.concert.dto;
 
+import io.hhplus.concert.domain.payment.dto.TicketInfo;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConcertPaymentDto {
-    public record Ticket(
-            Long id,
-            ConcertInfo concertInfo,
-            SeatInfo seatInfo
-    ) {}
-
-    public record ConcertInfo(
-            Long concertOptionId,
-            Integer price,
-            LocalDateTime startAt,
-            LocalDateTime endAt
-    ) {}
-
-    public record SeatInfo(
-            Long id,
-            Integer number
-    ) {}
-
     public record Response(
-            int status,
-            String description,
-            List<Ticket> ticketList
-    ) {}
+            List<TicketDto> ticketList
+    ) {
+        public static Response of(List<TicketInfo> ticketList) {
+            List<TicketDto> response = new ArrayList<>();
+            ticketList.forEach(ticket -> response.add(
+                    new TicketDto(
+                            ticket.id(),
+                            ticket.seatId(),
+                            ticket.price()
+                    ))
+            );
+            return new Response(response);
+        }
+    }
+
+    public record TicketDto(
+            Long id,
+            Long seatId,
+            Integer price
+    ) {
+    }
 }
