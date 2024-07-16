@@ -1,13 +1,14 @@
 package io.hhplus.concert.domain.token;
 
+import io.hhplus.concert.common.enums.ErrorCode;
 import io.hhplus.concert.common.enums.TokenStatusType;
 import io.hhplus.concert.common.exception.CustomException;
-import io.hhplus.concert.common.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class TokenService {
         token = tokenRepository.save(token);
 
         // 현재 대기열 첫 순번인 토큰의 ID 조회
-        Long firstPositionId = tokenRepository.findFirstPositionId().orElseThrow(() -> new NotFoundException("토큰 조회 실패"));
+        Long firstPositionId = tokenRepository.findFirstPositionId().orElseThrow(() -> new CustomException(ErrorCode.NO_DATA));
 
         // 생성된 사용자 토큰의 대기순번, 처리시간, 만료시간을 설정
         token.setPosition(token.getId(), firstPositionId);
@@ -44,11 +45,11 @@ public class TokenService {
      * @return Token
      */
     public Token find(String tokenString) {
-        Token token = tokenRepository.findByToken(tokenString).orElseThrow(() -> new NotFoundException("토큰 조회 실패"));
+        Token token = tokenRepository.findByToken(tokenString).orElseThrow(() -> new CustomException(ErrorCode.TOKEN_NOT_EXIST));
 
-        if (token.getStatus().equals(TokenStatusType.EXPIRED)) throw new CustomException("만료된 토큰");
+        if (token.getStatus().equals(TokenStatusType.EXPIRED)) throw new CustomException(ErrorCode.UNAUTHORIZED);
 
-        Long first = tokenRepository.findFirstPositionId().orElseThrow(() -> new NotFoundException("토큰 조회 실패"));
+        Long first = tokenRepository.findFirstPositionId().orElseThrow(() -> new CustomException(ErrorCode.NO_DATA));
         token.setPosition(token.getId(), first);
 
         return token;
@@ -61,7 +62,7 @@ public class TokenService {
      * @return boolean 가능 여부
      */
     public boolean isAvailable(String authorization) {
-        Token token = tokenRepository.findByToken(authorization).orElseThrow(() -> new NotFoundException("토큰 조회 실패"));
+        Token token = tokenRepository.findByToken(authorization).orElseThrow(() ->new CustomException(ErrorCode.TOKEN_NOT_EXIST));
 
         return token.getStatus().equals(TokenStatusType.AVAILABLE)
                 && token.getAvailableAt().isBefore(LocalDateTime.now())
@@ -69,7 +70,17 @@ public class TokenService {
     }
 
     public void requestApi(String authorization) {
-        Token token = tokenRepository.findByToken(authorization).orElseThrow(() -> new NotFoundException("토큰 조회 실패"));
+        Token token = tokenRepository.findByToken(authorization).orElseThrow(() -> new CustomException(ErrorCode.TOKEN_NOT_EXIST));
         token.setLastRequestAt(LocalDateTime.now());
+    }
+
+    public void process() {
+        List<Token> tokens = tokenRepository.findByStatusAndAvailableAtBefore(TokenStatusType.WAITING, LocalDateTime.now());
+        tokens.forEach(token -> token.setStatus(TokenStatusType.AVAILABLE));
+    }
+
+    public void expire() {
+        List<Token> tokens = tokenRepository.findByStatusAndExpireAtBefore(TokenStatusType.AVAILABLE, LocalDateTime.now());
+        tokens.forEach(token -> token.setStatus(TokenStatusType.EXPIRED));
     }
 }
