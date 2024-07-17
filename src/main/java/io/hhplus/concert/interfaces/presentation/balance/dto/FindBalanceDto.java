@@ -1,7 +1,6 @@
-package io.hhplus.concert.presentation.balance.dto;
+package io.hhplus.concert.interfaces.presentation.balance.dto;
 
-import io.hhplus.concert.domain.balance.Balance;
-import io.hhplus.concert.domain.balance.command.FindBalanceResponseCommand;
+import io.hhplus.concert.domain.balance.command.FindBalanceResponse;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -14,7 +13,7 @@ public class FindBalanceDto {
             LocalDateTime updatedAt
     ) {}
 
-    public static FindBalanceDto.Response of(FindBalanceResponseCommand command) {
+    public static FindBalanceDto.Response of(FindBalanceResponse command) {
         return FindBalanceDto.Response.builder()
                 .balance(command.balance())
                 .createdAt(command.createdAt())

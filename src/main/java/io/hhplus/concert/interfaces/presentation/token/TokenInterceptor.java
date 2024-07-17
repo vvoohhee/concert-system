@@ -1,4 +1,4 @@
-package io.hhplus.concert.presentation.token;
+package io.hhplus.concert.interfaces.presentation.token;
 
 import io.hhplus.concert.application.token.UserTokenService;
 import jakarta.servlet.http.HttpServletRequest;

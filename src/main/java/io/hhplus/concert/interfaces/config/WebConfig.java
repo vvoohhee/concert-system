@@ -1,6 +1,6 @@
-package io.hhplus.concert.common.config;
+package io.hhplus.concert.interfaces.config;
 
-import io.hhplus.concert.presentation.token.TokenInterceptor;
+import io.hhplus.concert.interfaces.presentation.token.TokenInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

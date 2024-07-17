@@ -1,20 +1,15 @@
-package io.hhplus.concert.presentation.payment;
+package io.hhplus.concert.interfaces.presentation.payment;
 
 import io.hhplus.concert.application.payment.UserPaymentService;
-import io.hhplus.concert.presentation.concert.dto.ConcertPaymentDto;
+import io.hhplus.concert.interfaces.presentation.concert.dto.ConcertPaymentDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/payment")
