@@ -9,13 +9,11 @@ import io.hhplus.concert.domain.payment.PaymentService;
 import io.hhplus.concert.domain.payment.dto.TicketInfo;
 import io.hhplus.concert.domain.token.Token;
 import io.hhplus.concert.domain.token.TokenService;
-import io.hhplus.concert.presentation.balance.BalanceController;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor

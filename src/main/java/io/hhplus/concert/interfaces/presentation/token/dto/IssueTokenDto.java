@@ -1,4 +1,4 @@
-package io.hhplus.concert.presentation.token.dto;
+package io.hhplus.concert.interfaces.presentation.token.dto;
 
 import io.hhplus.concert.common.enums.TokenStatusType;
 import io.hhplus.concert.domain.token.TokenInfo;

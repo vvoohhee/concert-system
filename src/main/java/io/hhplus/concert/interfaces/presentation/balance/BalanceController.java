@@ -1,8 +1,8 @@
-package io.hhplus.concert.presentation.balance;
+package io.hhplus.concert.interfaces.presentation.balance;
 
 import io.hhplus.concert.application.balance.UserBalanceService;
-import io.hhplus.concert.presentation.balance.dto.FindBalanceDto;
-import io.hhplus.concert.presentation.balance.dto.RechargeBalanceDto;
+import io.hhplus.concert.interfaces.presentation.balance.dto.RechargeBalanceDto;
+import io.hhplus.concert.interfaces.presentation.balance.dto.FindBalanceDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

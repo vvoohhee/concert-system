@@ -1,4 +1,4 @@
-package io.hhplus.concert.presentation.balance.dto;
+package io.hhplus.concert.interfaces.presentation.balance.dto;
 
 import io.hhplus.concert.domain.balance.command.FindBalanceResponse;
 import lombok.Builder;

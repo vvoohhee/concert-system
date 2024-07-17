@@ -1,4 +1,4 @@
-package io.hhplus.concert.presentation.concert.dto;
+package io.hhplus.concert.interfaces.presentation.concert.dto;
 
 import io.hhplus.concert.domain.concert.dto.ConcertOptionInfo;
 

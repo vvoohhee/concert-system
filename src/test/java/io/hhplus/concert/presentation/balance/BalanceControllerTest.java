@@ -1,6 +1,7 @@
 package io.hhplus.concert.presentation.balance;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.hhplus.concert.interfaces.presentation.balance.BalanceController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

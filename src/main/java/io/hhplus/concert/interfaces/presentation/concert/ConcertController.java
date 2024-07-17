@@ -1,10 +1,10 @@
-package io.hhplus.concert.presentation.concert;
+package io.hhplus.concert.interfaces.presentation.concert;
 
 
 import io.hhplus.concert.application.concert.UserConcertService;
-import io.hhplus.concert.presentation.concert.dto.ConcertReserveDto;
-import io.hhplus.concert.presentation.concert.dto.ConcertsDto;
-import io.hhplus.concert.presentation.concert.dto.GetConcertSeatListDto;
+import io.hhplus.concert.interfaces.presentation.concert.dto.ConcertReserveDto;
+import io.hhplus.concert.interfaces.presentation.concert.dto.ConcertsDto;
+import io.hhplus.concert.interfaces.presentation.concert.dto.GetConcertSeatListDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

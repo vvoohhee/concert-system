@@ -1,8 +1,8 @@
-package io.hhplus.concert.presentation.token;
+package io.hhplus.concert.interfaces.presentation.token;
 
 import io.hhplus.concert.application.token.UserTokenService;
-import io.hhplus.concert.presentation.token.dto.IssueTokenDto;
-import io.hhplus.concert.presentation.token.dto.TokenStatusDto;
+import io.hhplus.concert.interfaces.presentation.token.dto.IssueTokenDto;
+import io.hhplus.concert.interfaces.presentation.token.dto.TokenStatusDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ConcertService {
 
-    private ConcertRepository concertRepository;
+    private final ConcertRepository concertRepository;
 
     public List<ConcertOptionInfo> findConcerts(LocalDateTime reserveAt) {
         List<ConcertOption> options = concertRepository.findAvailableConcertOptions(reserveAt);
