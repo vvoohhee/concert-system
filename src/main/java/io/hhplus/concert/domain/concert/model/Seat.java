@@ -1,5 +1,6 @@
 package io.hhplus.concert.domain.concert.model;
 
+import io.hhplus.concert.common.enums.ErrorCode;
 import io.hhplus.concert.common.enums.ReservationStatusType;
 import io.hhplus.concert.common.exception.CustomException;
 import jakarta.persistence.*;
@@ -8,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -33,9 +33,9 @@ public class Seat {
     private ReservationStatusType status;
 
     public Seat(Long concertOptionId, Integer number) {
-        if (Objects.isNull(concertOptionId)) throw new IllegalArgumentException("유효하지 않은 콘서트 옵션 ID");
+        if (Objects.isNull(concertOptionId)) throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
         if (number > ConcertOption.DEFAULT_SEAT_QUANTITY || number < 0)
-            throw new IllegalArgumentException("유효하지 않은 좌석 번호");
+            throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
         status = ReservationStatusType.AVAILABLE;
     }
 }

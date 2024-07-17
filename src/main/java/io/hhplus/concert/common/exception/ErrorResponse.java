@@ -7,11 +7,11 @@ import org.springframework.http.HttpStatus;
 @Getter
 @Setter
 public class ErrorResponse {
-    private int status;
+    private HttpStatus status;
     private String message;
 
     public ErrorResponse(HttpStatus status, String message) {
-        this.status = status.value();
+        this.status = status;
         this.message = message;
     }
 }

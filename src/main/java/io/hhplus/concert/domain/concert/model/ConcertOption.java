@@ -1,5 +1,7 @@
 package io.hhplus.concert.domain.concert.model;
 
+import io.hhplus.concert.common.enums.ErrorCode;
+import io.hhplus.concert.common.exception.CustomException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -57,7 +59,7 @@ public class ConcertOption {
     public static int DEFAULT_PURCHASE_LIMIT = 10;
 
     private void validateId(Long id) {
-        if (Objects.isNull(id)) throw new IllegalArgumentException("유효하지 않은 ID");
+        if (Objects.isNull(id)) throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
     }
 
     public ConcertOption(Long id, Long concertId, Integer price, LocalDateTime reserveFrom, LocalDateTime reserveUntil) {
@@ -89,6 +91,6 @@ public class ConcertOption {
     }
 
     public void checkPurchaseLimit(Integer request) {
-        if (request > purchaseLimit) throw new IllegalArgumentException("최대 예매 가능 개수 초과");
+        if (request > purchaseLimit) throw new CustomException(ErrorCode.RESERVATION_LIMIT_EXCEEDED);
     }
 }

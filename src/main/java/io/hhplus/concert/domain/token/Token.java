@@ -1,8 +1,8 @@
 package io.hhplus.concert.domain.token;
 
+import io.hhplus.concert.common.enums.ErrorCode;
 import io.hhplus.concert.common.enums.TokenStatusType;
 import io.hhplus.concert.common.exception.CustomException;
-import io.hhplus.concert.common.exception.UnauthorizedException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -58,7 +58,7 @@ public class Token {
     public final static int DURATION_MIN = 10;
 
     private void validateId(Long id) {
-        if (Objects.isNull(id)) throw new IllegalArgumentException("유효하지 않은 ID");
+        if (Objects.isNull(id)) throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
     }
 
     // 토큰 생성 요청 시
@@ -81,7 +81,7 @@ public class Token {
     }
 
     public void setAvailableAtAndExpireAt() {
-        if (Objects.isNull(position)) throw new CustomException("대기 순번이 없는 유저");
+        if (Objects.isNull(position)) throw new CustomException(ErrorCode.TOKEN_NOT_EXIST);
 
         // 현재 시간 + (내 순서 / 처리 시간당 입장 가능한 사람 수) * 놀이기구 한 번당 처리 시간
         availableAt = LocalDateTime.now().plusMinutes((position / MAX_AVAILABLE_COUNT) * DURATION_MIN);

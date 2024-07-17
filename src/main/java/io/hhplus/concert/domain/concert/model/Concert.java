@@ -1,11 +1,12 @@
 package io.hhplus.concert.domain.concert.model;
 
+import io.hhplus.concert.common.enums.ErrorCode;
+import io.hhplus.concert.common.exception.CustomException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -32,7 +33,7 @@ public class Concert {
     private LocalDateTime updatedAt;
 
     public Concert(Long id, String title, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        if(Objects.isNull(id)) throw new IllegalArgumentException("유효하지 않은 콘서트 아이디");
+        if(Objects.isNull(id)) throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
 
         this.id = id;
         this.title = title;
