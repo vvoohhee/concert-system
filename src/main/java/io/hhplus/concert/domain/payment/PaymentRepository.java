@@ -1,7 +1,9 @@
 package io.hhplus.concert.domain.payment;
 
-public interface PaymentRepository {
-    Ticket saveTicket(Ticket ticket);
+import java.util.List;
 
-    Payment savePayment(Payment payment);
+public interface PaymentRepository {
+    List<Ticket> saveTickets(List<Ticket> tickets);
+
+    List<Payment> savePayments(List<Payment> payments);
 }

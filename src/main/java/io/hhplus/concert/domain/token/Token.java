@@ -87,4 +87,8 @@ public class Token {
         availableAt = LocalDateTime.now().plusMinutes((position / MAX_AVAILABLE_COUNT) * DURATION_MIN);
         expireAt = this.availableAt.plusMinutes(DURATION_MIN);
     }
+
+    public void updateLastRequestAt(LocalDateTime lastRequestAt) {
+        this.lastRequestAt = lastRequestAt;
+    }
 }

@@ -1,9 +1,10 @@
 package io.hhplus.concert.domain.balance;
 
+import io.hhplus.concert.common.exception.CustomException;
 import io.hhplus.concert.common.exception.NotFoundException;
-import io.hhplus.concert.domain.balance.command.FindBalanceResponse;
-import io.hhplus.concert.domain.balance.command.RechargeRequestCommand;
-import io.hhplus.concert.domain.balance.command.RechargeResponse;
+import io.hhplus.concert.domain.balance.dto.FindBalanceResponse;
+import io.hhplus.concert.domain.balance.dto.RechargeCommand;
+import io.hhplus.concert.domain.balance.dto.RechargeResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,10 +36,10 @@ public class BalanceServiceTest {
 
         // when
         when(balanceRepository.findByUserId(userId)).thenReturn(Optional.of(balance));
-        FindBalanceResponse result = balanceService.find(userId);
+        Balance result = balanceService.find(userId);
 
         // then
-        assertEquals(original, result.balance());
+        assertEquals(original, result.getBalance());
     }
 
     @Test
@@ -51,7 +52,7 @@ public class BalanceServiceTest {
         when(balanceRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
         // then
-        assertThrows(NotFoundException.class, () -> balanceService.find(userId));
+        assertThrows(CustomException.class, () -> balanceService.find(userId));
     }
 
     @Test
@@ -63,14 +64,14 @@ public class BalanceServiceTest {
         Balance balance = new Balance(userId, original);
         Integer rechargeAmount = 500;
 
-        RechargeRequestCommand request = new RechargeRequestCommand(userId, rechargeAmount);
+        RechargeCommand request = new RechargeCommand(userId, rechargeAmount);
 
         // when
         when(balanceRepository.findByUserId(userId)).thenReturn(Optional.of(balance));
-        RechargeResponse result = balanceService.recharge(request);
+        Balance result = balanceService.recharge(request);
 
         // then
-        assertEquals(original + rechargeAmount, result.balance());
+        assertEquals(original + rechargeAmount, result.getBalance());
     }
 
     @Test
@@ -80,12 +81,12 @@ public class BalanceServiceTest {
         Long userId = 1L;
         Integer rechargeAmount = 500;
 
-        RechargeRequestCommand request = new RechargeRequestCommand(userId, rechargeAmount);
+        RechargeCommand request = new RechargeCommand(userId, rechargeAmount);
 
         // when
         when(balanceRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
         // then
-        assertThrows(NotFoundException.class, () -> balanceService.recharge(request));
+        assertThrows(CustomException.class, () -> balanceService.recharge(request));
     }
 }

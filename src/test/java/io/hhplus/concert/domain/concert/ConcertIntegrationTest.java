@@ -4,47 +4,82 @@ import io.hhplus.concert.application.concert.UserConcertFacade;
 import io.hhplus.concert.domain.concert.dto.ConcertOptionInfo;
 import io.hhplus.concert.domain.concert.dto.ReservationInfo;
 import io.hhplus.concert.domain.concert.dto.SeatInfo;
+import io.hhplus.concert.domain.concert.model.Concert;
+import io.hhplus.concert.domain.concert.model.ConcertOption;
 import io.hhplus.concert.domain.token.Token;
 import io.hhplus.concert.domain.token.TokenService;
+import io.hhplus.concert.infrastructure.concert.ConcertJpaRepository;
+import io.hhplus.concert.infrastructure.concert.ConcertOptionJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
+@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 public class ConcertIntegrationTest {
 
-    @Mock
+    @Autowired
     private TokenService tokenService;
 
-    @Mock
+    @Autowired
+    private ConcertJpaRepository concertJpaRepository;
+
+    @Autowired
+    private ConcertOptionJpaRepository concertOptionJpaRepository;
+
+    @Autowired
     private ConcertService concertService;
 
-    @InjectMocks
+    @Autowired
     private UserConcertFacade userConcertFacade;
 
     private String tokenString;
 
+    private Concert concert;
+
     @BeforeEach
     public void setUp() {
-        Token mockToken = new Token(1L);
-        tokenString = mockToken.toString();
-        when(tokenService.find(mockToken.getToken())).thenReturn(mockToken);
+        Long userId = 1L;
+        Token token = tokenService.issue(userId);
+        tokenString = token.getToken();
+
+        Concert concert = new Concert(null, "워터밤양갱");
+        concert = concertJpaRepository.save(concert);
+        this.concert = concert;
+
+        ConcertOption option1 = new ConcertOption(
+                null,
+                concert,
+                10000,
+                10,
+                LocalDateTime.of(2024, 9, 1, 0, 0),
+                LocalDateTime.of(2024, 9, 10, 12, 0)
+        );
+        ConcertOption option2 = new ConcertOption(
+                null,
+                concert,
+                10000,
+                10,
+                LocalDateTime.of(2024, 10, 1, 0, 0),
+                LocalDateTime.of(2024, 10, 10, 12, 0)
+        );
+
+        concertOptionJpaRepository.saveAll(List.of(option1, option2));
     }
 
     @Test
-    public void findConcertsTest() {
+    public void 콘서트조회_성공() {
         // Given
-        LocalDateTime reserveAt = LocalDateTime.of(2024, 8, 1, 12, 0);
+        LocalDateTime reserveAt = LocalDateTime.of(2024, 9, 1, 12, 0);
 
         // When
         List<ConcertOptionInfo> result = userConcertFacade.findConcerts(reserveAt);

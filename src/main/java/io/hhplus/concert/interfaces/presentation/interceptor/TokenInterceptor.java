@@ -1,16 +1,18 @@
-package io.hhplus.concert.interfaces.presentation.token;
+package io.hhplus.concert.interfaces.presentation.interceptor;
 
 import io.hhplus.concert.application.token.UserTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 @Component
+@RequiredArgsConstructor
 public class TokenInterceptor implements HandlerInterceptor {
 
-    UserTokenService userTokenService;
+    private final UserTokenService userTokenService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {

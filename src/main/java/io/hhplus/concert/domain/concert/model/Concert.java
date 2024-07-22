@@ -1,13 +1,10 @@
 package io.hhplus.concert.domain.concert.model;
 
-import io.hhplus.concert.common.enums.ErrorCode;
-import io.hhplus.concert.common.exception.CustomException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity
 @Table(name = "concert")
@@ -32,12 +29,10 @@ public class Concert {
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
-    public Concert(Long id, String title, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        if(Objects.isNull(id)) throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
-
+    public Concert(Long id, String title) {
         this.id = id;
         this.title = title;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = createdAt;
     }
 }

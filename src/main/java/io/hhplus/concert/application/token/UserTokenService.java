@@ -6,4 +6,6 @@ public interface UserTokenService {
     TokenInfo issueUserToken(Long userId);
     TokenInfo findUserToken(String authorization);
     boolean isAvailableToken(String authorization);
+    void activateToken();
+    void expire();
 }
