@@ -1,4 +1,4 @@
-package io.hhplus.concert.domain.balance.command;
+package io.hhplus.concert.domain.balance.dto;
 
 public record RechargeResponseCommand(
         Long id,

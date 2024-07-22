@@ -1,17 +1,10 @@
 package io.hhplus.concert.domain.token;
 
-import io.hhplus.concert.common.enums.TokenStatusType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.UUID;
-
-import static io.hhplus.concert.domain.token.Token.DURATION_MIN;
-import static io.hhplus.concert.domain.token.Token.MAX_AVAILABLE_COUNT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 

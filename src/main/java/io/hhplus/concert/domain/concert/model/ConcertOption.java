@@ -1,9 +1,9 @@
 package io.hhplus.concert.domain.concert.model;
 
+import io.hhplus.concert.common.enums.ErrorCode;
+import io.hhplus.concert.common.exception.CustomException;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -12,14 +12,16 @@ import java.util.Objects;
 @Table(name = "concert_option")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Getter
+@Setter
 public class ConcertOption {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
     private Integer price;
 
     @Column(name = "seat_quantity", nullable = false)
@@ -49,7 +51,7 @@ public class ConcertOption {
     private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "concert_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "concert_id", referencedColumnName = "id")
     private Concert concert;
 
     public static int DEFAULT_SEAT_QUANTITY = 50;
@@ -57,31 +59,36 @@ public class ConcertOption {
     public static int DEFAULT_PURCHASE_LIMIT = 10;
 
     private void validateId(Long id) {
-        if (Objects.isNull(id)) throw new IllegalArgumentException("유효하지 않은 ID");
+        if (Objects.isNull(id)) throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
     }
 
-    public ConcertOption(Long id, Long concertId, Integer price, LocalDateTime reserveFrom, LocalDateTime reserveUntil) {
+    public ConcertOption(Long id, Concert concert, Integer price, LocalDateTime reserveFrom, LocalDateTime reserveUntil) {
         validateId(id);
-        validateId(concertId);
+        validateId(concert.getId());
 
         this.id = id;
+        this.concert = concert;
         this.price = price;
         this.seatQuantity = DEFAULT_SEAT_QUANTITY;
         this.purchaseLimit = DEFAULT_PURCHASE_LIMIT;
         this.reserveFrom = reserveFrom;
         this.reserveUntil = reserveUntil;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = createdAt;
     }
 
-    public ConcertOption(Long id, Long concertId, Integer price, Integer purchaseLimit, LocalDateTime reserveFrom, LocalDateTime reserveUntil) {
-        validateId(id);
-        validateId(concertId);
+    public ConcertOption(Long id, Concert concert, Integer price, Integer purchaseLimit, LocalDateTime reserveFrom, LocalDateTime reserveUntil) {
+        validateId(concert.getId());
 
         this.id = id;
+        this.concert = concert;
         this.price = price;
         this.seatQuantity = DEFAULT_SEAT_QUANTITY;
         this.purchaseLimit = purchaseLimit;
         this.reserveFrom = reserveFrom;
         this.reserveUntil = reserveUntil;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = createdAt;
     }
 
     public boolean canReserve() {
@@ -89,6 +96,6 @@ public class ConcertOption {
     }
 
     public void checkPurchaseLimit(Integer request) {
-        if (request > purchaseLimit) throw new IllegalArgumentException("최대 예매 가능 개수 초과");
+        if (request > purchaseLimit) throw new CustomException(ErrorCode.RESERVATION_LIMIT_EXCEEDED);
     }
 }

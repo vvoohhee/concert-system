@@ -1,6 +1,8 @@
 package io.hhplus.concert.domain.payment;
 
 
+import io.hhplus.concert.common.enums.ErrorCode;
+import io.hhplus.concert.common.exception.CustomException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,7 +42,7 @@ public class Ticket {
     private LocalDateTime updatedAt;
 
     private void validateId(Long id) {
-        if(Objects.isNull(id)) throw new IllegalArgumentException("유효하지 않은 아이디");
+        if(Objects.isNull(id)) throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
     }
 
     public Ticket(Long seatId, Long userId, Integer price) {

@@ -2,9 +2,11 @@ package io.hhplus.concert.infrastructure.concert;
 
 import io.hhplus.concert.common.enums.ReservationStatusType;
 import io.hhplus.concert.domain.concert.ConcertRepository;
+import io.hhplus.concert.domain.concert.dto.SeatPriceInfo;
 import io.hhplus.concert.domain.concert.model.ConcertOption;
 import io.hhplus.concert.domain.concert.model.Reservation;
 import io.hhplus.concert.domain.concert.model.Seat;
+import io.hhplus.concert.infrastructure.concert.dto.SeatPriceProjection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -60,7 +62,11 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     }
 
     @Override
-    public ConcertOption findConcertOptionBySeatId(Long seatId) {
-        return concertOptionJpaRepository.findTopBySeatId(seatId);
+    public List<SeatPriceInfo> findSeatPriceInfoBySeatIdIn(List<Long> seatIds) {
+        return seatJpaRepository
+                .findSeatsProjectionByIdIn(seatIds)
+                .stream()
+                .map(p -> new SeatPriceInfo(p.getSeatId(), p.getPrice()))
+                .toList();
     }
 }

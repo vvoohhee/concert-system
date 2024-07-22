@@ -1,6 +1,7 @@
 package io.hhplus.concert.domain.concert;
 
 import io.hhplus.concert.common.enums.ReservationStatusType;
+import io.hhplus.concert.domain.concert.dto.SeatPriceInfo;
 import io.hhplus.concert.domain.concert.model.ConcertOption;
 import io.hhplus.concert.domain.concert.model.Reservation;
 import io.hhplus.concert.domain.concert.model.Seat;
@@ -25,5 +26,5 @@ public interface ConcertRepository {
 
     void deleteReservationById(Long id);
 
-    ConcertOption findConcertOptionBySeatId(Long seatId);
+    List<SeatPriceInfo> findSeatPriceInfoBySeatIdIn(List<Long> seatIds);
 }
