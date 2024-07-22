@@ -1,5 +1,6 @@
 package io.hhplus.concert.domain.concert;
 
+import io.hhplus.concert.common.enums.ErrorCode;
 import io.hhplus.concert.common.enums.ReservationStatusType;
 import io.hhplus.concert.common.exception.CustomException;
 import io.hhplus.concert.domain.concert.dto.ConcertOptionInfo;
@@ -69,7 +70,7 @@ public class ConcertService {
         LocalDateTime reservedAt = LocalDateTime.now();
 
         for (Seat seat : seats) {
-            if (!seat.getStatus().equals(ReservationStatusType.AVAILABLE)) throw new CustomException("이미 선택된 좌석입니다.");
+            if (!seat.getStatus().equals(ReservationStatusType.AVAILABLE)) throw new CustomException(ErrorCode.RESERVATION_CONFLICT);
 
             seat.setStatus(ReservationStatusType.TEMPORARY);
 
@@ -84,7 +85,7 @@ public class ConcertService {
     public List<SeatPriceInfo> findReservedPrice(Long userId) {
         List<Reservation> reservations = concertRepository.findReservationByReservedBy(userId);
 
-        if(reservations.isEmpty()) return List.of();
+        if (reservations.isEmpty()) return List.of();
 
         List<SeatPriceInfo> seatPriceInfoList = new ArrayList<>();
         for (Reservation reservation : reservations) {
@@ -93,5 +94,26 @@ public class ConcertService {
         }
 
         return seatPriceInfoList;
+    }
+
+    public void resetReservation() {
+        List<Seat> temporarilyReservedSeats = concertRepository.findSeatByStatus(ReservationStatusType.TEMPORARY);
+
+        if (temporarilyReservedSeats.isEmpty()) return;
+
+        LocalDateTime reservationLifetime = LocalDateTime.now().minusMinutes(Reservation.LIFETIME);
+
+        for (Seat seat : temporarilyReservedSeats) {
+            List<Reservation> reservations = concertRepository.findReservationBySeatId(seat.getId());
+
+            if (reservations.isEmpty()) continue;
+
+            for (Reservation reservation : reservations) {
+                if (reservation.getReservedAt().isBefore(reservationLifetime)) {
+                    seat.setStatus(ReservationStatusType.AVAILABLE);
+                    concertRepository.deleteReservationById(reservation.getId());
+                }
+            }
+        }
     }
 }
