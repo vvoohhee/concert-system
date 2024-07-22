@@ -15,4 +15,6 @@ public interface UserConcertService {
 
     List<ReservationInfo> reserveSeats(List<Long> seatIdList, String token);
 
+    void resetReservation();
+
 }

@@ -45,5 +45,6 @@ public class BalanceHistory {
         this.balanceId = balanceId;
         this.amount = amount;
         this.type = type;
+        this.createdAt = LocalDateTime.now();
     }
 }

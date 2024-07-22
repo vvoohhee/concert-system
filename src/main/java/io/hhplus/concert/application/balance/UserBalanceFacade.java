@@ -1,13 +1,11 @@
 package io.hhplus.concert.application.balance;
 
 import io.hhplus.concert.common.enums.BalanceHistoryType;
-import io.hhplus.concert.domain.balance.BalanceHistoryService;
+import io.hhplus.concert.domain.balance.Balance;
 import io.hhplus.concert.domain.balance.BalanceService;
-import io.hhplus.concert.domain.balance.command.RechargeRequestCommand;
-import io.hhplus.concert.domain.balance.command.RechargeResponse;
-import io.hhplus.concert.domain.balance.command.SaveBalanceHistoryRequestCommand;
-import io.hhplus.concert.presentation.balance.dto.FindBalanceDto;
-import io.hhplus.concert.presentation.balance.dto.RechargeBalanceDto;
+import io.hhplus.concert.domain.balance.dto.BalanceInfo;
+import io.hhplus.concert.domain.balance.dto.RechargeCommand;
+import io.hhplus.concert.domain.balance.dto.SaveBalanceHistoryCommand;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,21 +15,21 @@ import org.springframework.stereotype.Component;
 public class UserBalanceFacade implements UserBalanceService {
 
     private final BalanceService balanceService;
-    private final BalanceHistoryService balanceHistoryService;
 
     @Override
-    public FindBalanceDto.Response findUserBalance(Long userId) {
-        return FindBalanceDto.of(balanceService.find(userId));
+    public BalanceInfo findUserBalance(Long userId) {
+        Balance balance = balanceService.find(userId);
+        return new BalanceInfo(balance.getUserId(), balance.getBalance());
     }
 
     @Override
     @Transactional
-    public RechargeBalanceDto.Response recharge(Long userId, Integer amount) {
-        RechargeResponse rechargeResult = balanceService.recharge(new RechargeRequestCommand(userId, amount));
+    public BalanceInfo recharge(Long userId, Integer amount) {
+        Balance balance = balanceService.recharge(new RechargeCommand(userId, amount));
 
-        SaveBalanceHistoryRequestCommand saveHistoryRequest = new SaveBalanceHistoryRequestCommand(rechargeResult.id(), amount, BalanceHistoryType.RECHARGE);
-        balanceHistoryService.save(saveHistoryRequest);
+        SaveBalanceHistoryCommand saveHistoryRequest = new SaveBalanceHistoryCommand(balance.getId(), amount, BalanceHistoryType.RECHARGE);
+        balanceService.saveHistory(saveHistoryRequest);
 
-        return RechargeBalanceDto.of(rechargeResult);
+        return new BalanceInfo(balance.getUserId(), balance.getBalance());
     }
 }
