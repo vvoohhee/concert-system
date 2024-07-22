@@ -13,28 +13,33 @@ public class UserTokenFacade implements UserTokenService {
     private final TokenService tokenService;
 
     @Override
-    @Transactional
     public TokenInfo issueUserToken(Long userId) {
         Token token = tokenService.issue(userId);
         return new TokenInfo(token.getToken(), token.getStatus(), token.getPosition());
     }
 
     @Override
-    @Transactional
     public TokenInfo findUserToken(String tokenString) {
         Token token = tokenService.find(tokenString);
         return new TokenInfo(token.getToken(), token.getStatus(), token.getPosition());
     }
 
     @Override
-    @Transactional
     public boolean isAvailableToken(String authorization) {
         boolean isAvailable = tokenService.isAvailable(authorization);
 
-        if (isAvailable) {
-            tokenService.requestApi(authorization);
-        }
+        if (isAvailable) tokenService.updateLastRequestTime(authorization);
 
         return isAvailable;
+    }
+
+    @Override
+    public void activateToken() {
+        tokenService.activateToken();
+    }
+
+    @Override
+    public void expire() {
+        tokenService.expire();
     }
 }

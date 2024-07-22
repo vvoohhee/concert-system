@@ -56,7 +56,7 @@ public class TokenService {
     }
 
     /**
-     * 토큰이 API 요청할 수 있는 (처리가능한) 상태인지 확인
+     * 토큰이 API를 요청할 수 있는 (처리가능한) 상태인지 확인
      *
      * @param authorization 토큰
      * @return boolean 가능 여부
@@ -69,12 +69,13 @@ public class TokenService {
                 && token.getExpireAt().isAfter(LocalDateTime.now());
     }
 
-    public void requestApi(String authorization) {
+    public void updateLastRequestTime(String authorization) {
         Token token = tokenRepository.findByToken(authorization).orElseThrow(() -> new CustomException(ErrorCode.TOKEN_NOT_EXIST));
-        token.setLastRequestAt(LocalDateTime.now());
+        token.updateLastRequestAt(LocalDateTime.now());
     }
 
-    public void process() {
+    @Transactional
+    public void activateToken() {
         List<Token> tokens = tokenRepository.findByStatusAndAvailableAtBefore(TokenStatusType.WAITING, LocalDateTime.now());
         tokens.forEach(token -> token.setStatus(TokenStatusType.AVAILABLE));
     }

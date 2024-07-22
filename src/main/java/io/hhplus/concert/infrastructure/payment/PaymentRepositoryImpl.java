@@ -6,6 +6,8 @@ import io.hhplus.concert.domain.payment.Ticket;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class PaymentRepositoryImpl implements PaymentRepository {
@@ -15,12 +17,12 @@ public class PaymentRepositoryImpl implements PaymentRepository {
 
 
     @Override
-    public Ticket saveTicket(Ticket ticket) {
-        return ticketJpaRepository.save(ticket);
+    public List<Ticket> saveTickets(List<Ticket> tickets) {
+        return ticketJpaRepository.saveAll(tickets);
     }
 
     @Override
-    public Payment savePayment(Payment payment) {
-        return paymentJpaRepository.save(payment);
+    public List<Payment> savePayments(List<Payment> payments) {
+        return paymentJpaRepository.saveAll(payments);
     }
 }

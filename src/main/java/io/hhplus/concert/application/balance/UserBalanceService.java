@@ -1,9 +1,8 @@
 package io.hhplus.concert.application.balance;
 
-import io.hhplus.concert.presentation.balance.dto.FindBalanceDto;
-import io.hhplus.concert.presentation.balance.dto.RechargeBalanceDto;
+import io.hhplus.concert.domain.balance.dto.BalanceInfo;
 
 public interface UserBalanceService {
-    FindBalanceDto.Response findUserBalance(Long userId);
-    RechargeBalanceDto.Response recharge(Long userId, Integer amount);
+    BalanceInfo findUserBalance(Long userId);
+    BalanceInfo recharge(Long userId, Integer amount);
 }

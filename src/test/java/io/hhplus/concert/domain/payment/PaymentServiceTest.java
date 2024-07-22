@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,10 +36,10 @@ public class PaymentServiceTest {
         Ticket ticket1 = new Ticket(1L, 1L, userId, 50000, LocalDateTime.now(), LocalDateTime.now());
         Payment payment1 = new Payment(ticket1.getId(), ticket1.getPrice(), PaymentStatus.PAID);
 
-        when(paymentRepository.saveTicket(any(Ticket.class))).thenReturn(ticket1);
-        when(paymentRepository.savePayment(any(Payment.class))).thenReturn(payment1);
+        when(paymentRepository.saveTickets(Collections.singletonList(any(Ticket.class)))).thenReturn(List.of(ticket1));
+        when(paymentRepository.savePayments(Collections.singletonList(any(Payment.class)))).thenReturn(List.of(payment1));
 
-        List<TicketInfo> result = paymentService.billing(userId, seatPriceInfos);
+        List<Ticket> result = paymentService.billing(userId, seatPriceInfos);
 
         assertEquals(1, result.size());
     }

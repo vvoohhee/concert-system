@@ -2,7 +2,6 @@ package io.hhplus.concert.domain.concert;
 
 import io.hhplus.concert.common.enums.ReservationStatusType;
 import io.hhplus.concert.domain.concert.dto.ConcertOptionInfo;
-import io.hhplus.concert.domain.concert.dto.SeatInfo;
 import io.hhplus.concert.domain.concert.model.Concert;
 import io.hhplus.concert.domain.concert.model.ConcertOption;
 import io.hhplus.concert.domain.concert.model.Reservation;
@@ -30,9 +29,11 @@ public class ConcertServiceTest {
     @InjectMocks
     private ConcertService concertService;
 
+    private Concert concert;
+
     @BeforeEach()
     public void setUp() {
-        Concert concert = new Concert(1L, "워터밤양갱", LocalDateTime.of(2024, 8, 1, 0, 0), LocalDateTime.of(2024, 8, 1, 0, 0));
+        this.concert = new Concert(null, "워터밤양갱");
     }
 
     @Test
@@ -41,8 +42,8 @@ public class ConcertServiceTest {
         LocalDateTime reserveAt = LocalDateTime.of(2024, 9, 1, 20, 0);
 
         ConcertOption option1 = new ConcertOption(
-                1L,
-                1L,
+                null,
+                concert,
                 100000,
                 10,
                 LocalDateTime.of(2024, 9, 1, 0, 0),
@@ -62,7 +63,7 @@ public class ConcertServiceTest {
     public void findSeatsTest() {
         ConcertOption option1 = new ConcertOption(
                 1L,
-                1L,
+                concert,
                 100000,
                 10,
                 LocalDateTime.of(2024, 9, 1, 0, 0),
@@ -74,17 +75,17 @@ public class ConcertServiceTest {
 
         when(concertRepository.findSeatByConcertOptionId(option1.getId())).thenReturn(List.of(seat1));
 
-        List<SeatInfo> result = concertService.findSeats(1L);
+        List<Seat> result = concertService.findSeats(1L);
 
         assertEquals(1, result.size());
-        SeatInfo info = result.get(0);
+        Seat info = result.get(0);
     }
 
     @Test
     public void reserveSeatsTest() {
         ConcertOption option1 = new ConcertOption(
                 1L,
-                1L,
+                concert,
                 100000,
                 10,
                 LocalDateTime.of(2024, 9, 1, 0, 0),

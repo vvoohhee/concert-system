@@ -1,7 +1,9 @@
 package io.hhplus.concert.domain.token;
 
 import io.hhplus.concert.application.token.UserTokenFacade;
+import io.hhplus.concert.common.enums.ErrorCode;
 import io.hhplus.concert.common.enums.TokenStatusType;
+import io.hhplus.concert.common.exception.CustomException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +28,7 @@ class TokenIntegrationTest {
     private TokenService tokenService;
 
     @Test
-    void issueUserToken_성공() {
+    void 토큰발급_성공() {
         // Given
         Long userId = 1L;
 
@@ -40,7 +42,17 @@ class TokenIntegrationTest {
     }
 
     @Test
-    void findUserToken_성공() {
+    void 토큰발급_실패_유저아이디_NULL() {
+        // Given
+        Long userId = null;
+
+        // When - Then
+        CustomException exception = assertThrows(CustomException.class, () -> userTokenFacade.issueUserToken(userId));
+        assertEquals(exception.getErrorCode(), ErrorCode.ILLEGAL_ARGUMENT);
+    }
+
+    @Test
+    void 토큰조회_성공() {
         // Given
         Long userId = 1L;
         TokenInfo issuedTokenInfo = userTokenFacade.issueUserToken(userId);
@@ -49,7 +61,6 @@ class TokenIntegrationTest {
         TokenInfo foundTokenInfo = userTokenFacade.findUserToken(issuedTokenInfo.token());
 
         // Then
-        assertNotNull(foundTokenInfo);
         assertEquals(issuedTokenInfo.token(), foundTokenInfo.token());
         assertEquals(issuedTokenInfo.status(), foundTokenInfo.status());
         assertEquals(issuedTokenInfo.position(), foundTokenInfo.position());

@@ -4,11 +4,11 @@ import io.hhplus.concert.common.enums.ErrorCode;
 import io.hhplus.concert.common.enums.ReservationStatusType;
 import io.hhplus.concert.common.exception.CustomException;
 import io.hhplus.concert.domain.concert.dto.ConcertOptionInfo;
-import io.hhplus.concert.domain.concert.dto.SeatInfo;
 import io.hhplus.concert.domain.concert.dto.SeatPriceInfo;
 import io.hhplus.concert.domain.concert.model.ConcertOption;
 import io.hhplus.concert.domain.concert.model.Reservation;
 import io.hhplus.concert.domain.concert.model.Seat;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,45 +20,49 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ConcertService {
 
-    private ConcertRepository concertRepository;
+    private final ConcertRepository concertRepository;
 
+    /**
+     * 콘서트 공연(회차) 리스트 조회
+     *
+     * @param reserveAt 예약할 날짜 일시
+     * @return List<ConcertOption> 콘서트 공연(회차) 리스트
+     */
+    @Transactional
     public List<ConcertOptionInfo> findConcerts(LocalDateTime reserveAt) {
-        List<ConcertOption> options = concertRepository.findAvailableConcertOptions(reserveAt);
+        List<ConcertOption> concertOptions = concertRepository.findAvailableConcertOptions(reserveAt);
 
-        List<ConcertOptionInfo> concertOptionInfoList = new ArrayList<>();
-        for (ConcertOption option : options) {
-            concertOptionInfoList.add(
-                    new ConcertOptionInfo(option.getId(),
-                            option.getConcert().getTitle(),
-                            option.getPrice(),
-                            option.getSeatQuantity(),
-                            option.getPurchaseLimit(),
-                            option.getReserveFrom(),
-                            option.getReserveUntil(),
-                            option.getStartAt(),
-                            option.getEndAt()
-                    ));
-        }
-
-        return concertOptionInfoList;
+        return concertOptions.stream()
+                .map(option -> new ConcertOptionInfo(
+                        option.getId(),
+                        option.getConcert().getTitle(),
+                        option.getPrice(),
+                        option.getSeatQuantity(),
+                        option.getPurchaseLimit(),
+                        option.getReserveFrom(),
+                        option.getReserveUntil(),
+                        option.getStartAt(),
+                        option.getEndAt()))
+                .toList();
     }
 
-    public List<SeatInfo> findSeats(Long concertOptionId) {
-        List<Seat> seats = concertRepository.findSeatByConcertOptionId(concertOptionId);
-        List<SeatInfo> seatInfoList = new ArrayList<>();
-        for (Seat seat : seats) {
-            seatInfoList.add(new SeatInfo(seat.getId(), seat.getNumber(), seat.getStatus()));
-        }
-
-        return seatInfoList;
+    /**
+     * 특정 콘서트 공연(회차)의 좌석 리스트 조회
+     *
+     * @param concertOptionId
+     * @return
+     */
+    public List<Seat> findSeats(Long concertOptionId) {
+        return concertRepository.findSeatByConcertOptionId(concertOptionId);
     }
 
     /**
      * 좌석 예약 메서드
      *
      * @param seatIdList 좌석테이블 ID 리스트
-     * @return List<Reservation> 성공한 좌석에 대한 예약 리스트
+     * @return List<Reservation> 예약 성공한 좌석에 대한 예약 리스트
      */
+    @Transactional
     public List<Reservation> reserveSeats(List<Long> seatIdList, Long userId) {
         List<Seat> seats = concertRepository.findSeatByIdIn(seatIdList);
 
@@ -66,12 +70,14 @@ public class ConcertService {
                 .filter(seat -> seat.getStatus().equals(ReservationStatusType.AVAILABLE))
                 .toList();
 
+        if (seats.size() != seatIdList.size()) {
+            throw new CustomException(ErrorCode.RESERVATION_CONFLICT);
+        }
+
         List<Reservation> reservationList = new ArrayList<>();
         LocalDateTime reservedAt = LocalDateTime.now();
 
         for (Seat seat : seats) {
-            if (!seat.getStatus().equals(ReservationStatusType.AVAILABLE)) throw new CustomException(ErrorCode.RESERVATION_CONFLICT);
-
             seat.setStatus(ReservationStatusType.TEMPORARY);
 
             Reservation reservation = new Reservation(seat.getId(), userId, reservedAt);
@@ -82,20 +88,26 @@ public class ConcertService {
         return reservationList;
     }
 
-    public List<SeatPriceInfo> findReservedPrice(Long userId) {
-        List<Reservation> reservations = concertRepository.findReservationByReservedBy(userId);
-
-        if (reservations.isEmpty()) return List.of();
-
-        List<SeatPriceInfo> seatPriceInfoList = new ArrayList<>();
-        for (Reservation reservation : reservations) {
-            ConcertOption concertOption = concertRepository.findConcertOptionBySeatId(reservation.getSeatId());
-            seatPriceInfoList.add(new SeatPriceInfo(reservation.getSeatId(), concertOption.getPrice()));
-        }
-
-        return seatPriceInfoList;
+    /**
+     * 사용자가 예약한 하나 이상의 좌석 정보를 조회
+     *
+     * @param userId 사용자 PK
+     * @return List<SeatPriceInfo> 사용자의 예약 리스트 조회
+     */
+    public List<Reservation> findUserReservations(Long userId) {
+        return concertRepository.findReservationByReservedBy(userId);
     }
 
+    /**
+     * 하나 이상의 좌석에 대해 가격 정보를 조회
+     *
+     * @return List<SeatPriceInfo> 좌석별 가격 정보 리스트
+     */
+    public List<SeatPriceInfo> findReservationPrice(List<Long> seatIds) {
+        return concertRepository.findSeatPriceInfoBySeatIdIn(seatIds);
+    }
+
+    @Transactional
     public void resetReservation() {
         List<Seat> temporarilyReservedSeats = concertRepository.findSeatByStatus(ReservationStatusType.TEMPORARY);
 

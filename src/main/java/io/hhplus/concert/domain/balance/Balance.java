@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name="balance")
+@Table(name = "balance")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,7 +34,7 @@ public class Balance {
     private LocalDateTime updatedAt;
 
     public Balance(Long userId) {
-        if(Objects.isNull(userId)) throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
+        if (Objects.isNull(userId)) throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
 
         this.userId = userId;
         this.balance = 0;
@@ -52,13 +52,16 @@ public class Balance {
     }
 
     public void recharge(Integer amount) {
+        if (Objects.isNull(amount) || amount < 0) throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
+
         balance += amount;
     }
 
     public void consume(Integer amount) {
+        if (Objects.isNull(amount) || amount < 0) throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
+
         balance -= amount;
 
-        if(balance < 0) throw new CustomException(ErrorCode.ILLEGAL_PAYMENT_ARGUMENT);
-
+        if (balance < 0) throw new CustomException(ErrorCode.ILLEGAL_PAYMENT_ARGUMENT);
     }
 }

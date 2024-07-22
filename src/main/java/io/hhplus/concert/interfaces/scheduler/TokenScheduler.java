@@ -13,8 +13,8 @@ public class TokenScheduler {
     private final UserTokenService tokenService;
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
-    public void process() {
-        tokenService.process();
+    public void activateToken() {
+        tokenService.activateToken();
     }
 
     @Scheduled(fixedRate = 3, timeUnit = TimeUnit.MINUTES)
