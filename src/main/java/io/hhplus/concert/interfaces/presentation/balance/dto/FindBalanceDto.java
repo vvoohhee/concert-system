@@ -1,6 +1,6 @@
 package io.hhplus.concert.interfaces.presentation.balance.dto;
 
-import io.hhplus.concert.domain.balance.dto.BalanceInfo;
+import io.hhplus.concert.domain.user.dto.BalanceInfo;
 import lombok.Builder;
 
 public class FindBalanceDto {
