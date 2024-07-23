@@ -1,25 +1,16 @@
-package io.hhplus.concert.domain.balance;
+package io.hhplus.concert.domain.user;
 
 
-import io.hhplus.concert.application.balance.UserBalanceFacade;
-import io.hhplus.concert.application.balance.UserBalanceService;
+import io.hhplus.concert.application.user.UserBalanceFacade;
 import io.hhplus.concert.common.enums.ErrorCode;
 import io.hhplus.concert.common.exception.CustomException;
-import io.hhplus.concert.domain.balance.dto.BalanceInfo;
-import io.hhplus.concert.domain.balance.dto.FindBalanceResponse;
-import io.hhplus.concert.domain.balance.dto.RechargeCommand;
-import io.hhplus.concert.domain.balance.dto.RechargeResponse;
-import io.hhplus.concert.interfaces.presentation.balance.dto.FindBalanceDto;
-import io.hhplus.concert.interfaces.presentation.balance.dto.RechargeBalanceDto;
+import io.hhplus.concert.domain.user.dto.BalanceInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,10 +20,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BalanceIntegrationTest {
 
     @Autowired
-    private BalanceService balanceService;
+    private UserService userService;
 
     @Autowired
-    private BalanceRepository balanceRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private UserBalanceFacade userBalanceFacade;
@@ -43,7 +34,7 @@ public class BalanceIntegrationTest {
         Long userId = 1L;
 
         // when
-        Balance balance = balanceRepository.findByUserId(userId).orElse(null);
+        Balance balance = userRepository.findBalanceByUserId(userId).orElse(null);
         BalanceInfo response = userBalanceFacade.findUserBalance(userId);
 
         // then
@@ -77,8 +68,8 @@ public class BalanceIntegrationTest {
         Long userId = 1L;
         Integer amount = 500;
 
-        Balance balance = balanceRepository.findByUserId(userId).orElse(null);
-        BalanceInfo response = userBalanceFacade.recharge(userId, amount);
+        Balance balance = userRepository.findBalanceByUserId(userId).orElse(null);
+        BalanceInfo response = userBalanceFacade.rechargeBalance(userId, amount);
 
         assert balance != null;
         assertEquals(balance.getBalance() + amount, response.balance());
@@ -89,7 +80,7 @@ public class BalanceIntegrationTest {
         Long userId = null;
         Integer amount = 500;
 
-        CustomException exception = assertThrows(CustomException.class, () -> userBalanceFacade.recharge(userId, amount));
+        CustomException exception = assertThrows(CustomException.class, () -> userBalanceFacade.rechargeBalance(userId, amount));
         assertEquals(ErrorCode.NO_DATA.getMessage(), exception.getMessage());
     }
 
@@ -98,7 +89,7 @@ public class BalanceIntegrationTest {
         Long userId = 1L;
         Integer amount = null;
 
-        CustomException exception = assertThrows(CustomException.class, () -> userBalanceFacade.recharge(userId, amount));
+        CustomException exception = assertThrows(CustomException.class, () -> userBalanceFacade.rechargeBalance(userId, amount));
         assertEquals(ErrorCode.ILLEGAL_ARGUMENT.getMessage(), exception.getMessage());
     }
 
@@ -107,7 +98,7 @@ public class BalanceIntegrationTest {
         Long userId = 1L;
         Integer amount = -500;
 
-        CustomException exception = assertThrows(CustomException.class, () -> userBalanceFacade.recharge(userId, amount));
+        CustomException exception = assertThrows(CustomException.class, () -> userBalanceFacade.rechargeBalance(userId, amount));
         assertEquals(ErrorCode.ILLEGAL_ARGUMENT.getMessage(), exception.getMessage());
     }
 
@@ -116,25 +107,25 @@ public class BalanceIntegrationTest {
         // given
         Long userId = 1L;
         Integer amount = 500;
-        Balance balance = balanceRepository.findByUserId(userId).orElse(null);
+        Balance balance = userRepository.findBalanceByUserId(userId).orElse(null);
 
         // when
         CompletableFuture.allOf(
                 CompletableFuture.runAsync(() -> {
-                    userBalanceFacade.recharge(userId, amount);
+                    userBalanceFacade.rechargeBalance(userId, amount);
                 }),
                 CompletableFuture.runAsync(() -> {
-                    userBalanceFacade.recharge(userId, amount);
+                    userBalanceFacade.rechargeBalance(userId, amount);
                 }),
                 CompletableFuture.runAsync(() -> {
-                    userBalanceFacade.recharge(userId, amount);
+                    userBalanceFacade.rechargeBalance(userId, amount);
                 })
         ).join();
 
         Thread.sleep(1000);
 
         // then
-        Balance result = balanceRepository.findByUserId(userId).orElse(null);
+        Balance result = userRepository.findBalanceByUserId(userId).orElse(null);
 
         assertNotNull(balance);
         assertNotNull(result);

@@ -1,6 +1,6 @@
-package io.hhplus.concert.infrastructure.balance;
+package io.hhplus.concert.infrastructure.user;
 
-import io.hhplus.concert.domain.balance.Balance;
+import io.hhplus.concert.domain.user.Balance;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

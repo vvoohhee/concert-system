@@ -1,4 +1,4 @@
-package io.hhplus.concert.domain.balance;
+package io.hhplus.concert.domain.user;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(MockitoExtension.class)
 public class BalanceUnitTest {
     @InjectMocks
-    private BalanceService balanceService;
+    private UserService userService;
 
     @Test
     @DisplayName("유저의 잔액이 0보다 작을 때 예외처리 테스트")

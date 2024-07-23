@@ -1,4 +1,4 @@
-package io.hhplus.concert.domain.balance;
+package io.hhplus.concert.domain.user;
 
 import io.hhplus.concert.common.enums.ErrorCode;
 import io.hhplus.concert.common.exception.CustomException;
@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.coyote.BadRequestException;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

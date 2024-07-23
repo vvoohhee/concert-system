@@ -2,8 +2,8 @@ package io.hhplus.concert.application.payment;
 
 import io.hhplus.concert.common.enums.ErrorCode;
 import io.hhplus.concert.common.exception.CustomException;
-import io.hhplus.concert.domain.balance.Balance;
-import io.hhplus.concert.domain.balance.BalanceService;
+import io.hhplus.concert.domain.user.Balance;
+import io.hhplus.concert.domain.user.UserService;
 import io.hhplus.concert.domain.concert.ConcertService;
 import io.hhplus.concert.domain.concert.dto.SeatPriceInfo;
 import io.hhplus.concert.domain.concert.model.Reservation;
@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @Slf4j
@@ -25,7 +26,7 @@ import java.util.List;
 public class UserPaymentFacade implements UserPaymentService {
     private final TokenService tokenService;
     private final ConcertService concertService;
-    private final BalanceService balanceService;
+    private final UserService userService;
     private final PaymentService paymentService;
 
     @Override
@@ -53,14 +54,14 @@ public class UserPaymentFacade implements UserPaymentService {
         for (SeatPriceInfo seatPriceInfo : priceInfos) totalPrice += seatPriceInfo.price();
 
         // 사용자의 잔액 조회
-        Balance userBalance = balanceService.find(token.getUserId());
+        Balance userBalance = userService.findBalance(token.getUserId());
 
 
         // 잔액 예외처리
         if (Objects.isNull(userBalance)) throw new CustomException(ErrorCode.BALANCE_NOT_EXIST);
 
         // 사용자 잔액 사용
-        balanceService.consume(token.getUserId(), totalPrice);
+        userService.consumeBalance(token.getUserId(), totalPrice);
 
         // 좌석별 티켓 생성
         List<Ticket> tickets = paymentService.billing(token.getUserId(), priceInfos);
