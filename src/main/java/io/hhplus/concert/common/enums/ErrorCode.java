@@ -13,6 +13,8 @@ public enum ErrorCode {
     ILLEGAL_PAYMENT_ARGUMENT(HttpStatus.INTERNAL_SERVER_ERROR, "결제 시도 금액이 보유한 금액을 초과", LogLevel.ERROR),
     RESERVATION_LIMIT_EXCEEDED(HttpStatus.OK, "최대 예매 가능 개수 초과", LogLevel.ERROR),
     RESERVATION_CONFLICT(HttpStatus.OK, "이미 선택한 좌석", LogLevel.WARN),
+    RESERVATION_PARTIALLY_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "예약 데이터 등록 일부 실패", LogLevel.ERROR),
+    UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 에러 발생", LogLevel.ERROR),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "권한 없음", LogLevel.ERROR);
 
     private final HttpStatus httpStatus;

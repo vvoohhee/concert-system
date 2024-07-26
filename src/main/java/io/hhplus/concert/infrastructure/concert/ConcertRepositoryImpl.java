@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -37,13 +38,28 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     }
 
     @Override
+    public Optional<Seat> findSeatByIdWithPessimisticLock(Long id) {
+        return seatJpaRepository.findSeatByIdWithPessimisticLock(id);
+    }
+
+    @Override
     public List<Seat> findSeatByIdIn(List<Long> ids) {
         return seatJpaRepository.findByIdIn(ids);
     }
 
     @Override
+    public List<Seat> updateSeatStatusByIdIn(List<Long> ids, ReservationStatusType status) {
+        return seatJpaRepository.updateStatusByIdIn(ids, status);
+    }
+
+    @Override
     public Reservation saveReservation(Reservation reservation) {
         return reservationJpaRepository.save(reservation);
+    }
+
+    @Override
+    public List<Reservation> saveReservations(List<Reservation> reservations) {
+        return reservationJpaRepository.saveAll(reservations);
     }
 
     @Override
