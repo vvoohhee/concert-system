@@ -36,6 +36,13 @@ public class Seat {
         if (Objects.isNull(concertOptionId)) throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
         if (number > ConcertOption.DEFAULT_SEAT_QUANTITY || number < 0)
             throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
+
+        this.concertOptionId = concertOptionId;
+        this.number = number;
         status = ReservationStatusType.AVAILABLE;
+    }
+
+    public void reserve() {
+        status = ReservationStatusType.TEMPORARY;
     }
 }
