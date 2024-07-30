@@ -32,6 +32,14 @@ public class Concert {
     public Concert(Long id, String title) {
         this.id = id;
         this.title = title;
+    }
+
+    public Concert(String title) {
+        this.title = title;
+    }
+
+    @PrePersist
+    public void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = createdAt;
     }

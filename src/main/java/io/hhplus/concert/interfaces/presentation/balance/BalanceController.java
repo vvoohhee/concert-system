@@ -1,6 +1,6 @@
 package io.hhplus.concert.interfaces.presentation.balance;
 
-import io.hhplus.concert.application.balance.UserBalanceService;
+import io.hhplus.concert.application.user.UserBalanceService;
 import io.hhplus.concert.interfaces.presentation.balance.dto.FindBalanceDto;
 import io.hhplus.concert.interfaces.presentation.balance.dto.RechargeBalanceDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +30,7 @@ public class BalanceController {
     public ResponseEntity<RechargeBalanceDto.Response> recharge(
             @RequestBody RechargeBalanceDto.Request request) {
         return ResponseEntity.ok(
-                RechargeBalanceDto.Response.of(userBalanceService.recharge(request.userId(), request.amount()))
+                RechargeBalanceDto.Response.of(userBalanceService.rechargeBalance(request.userId(), request.amount()))
         );
     }
 }

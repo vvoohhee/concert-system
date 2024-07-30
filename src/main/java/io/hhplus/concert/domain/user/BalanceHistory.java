@@ -1,4 +1,4 @@
-package io.hhplus.concert.domain.balance;
+package io.hhplus.concert.domain.user;
 
 import io.hhplus.concert.common.enums.BalanceHistoryType;
 import io.hhplus.concert.common.enums.ErrorCode;

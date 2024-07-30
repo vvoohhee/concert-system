@@ -8,6 +8,7 @@ import io.hhplus.concert.domain.concert.model.Seat;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface ConcertRepository {
     List<ConcertOption> findAvailableConcertOptions(LocalDateTime reserveAt);
@@ -16,9 +17,15 @@ public interface ConcertRepository {
 
     List<Seat> findSeatByStatus(ReservationStatusType status);
 
+    Optional<Seat> findSeatByIdWithPessimisticLock(Long id);
+
     List<Seat> findSeatByIdIn(List<Long> ids);
 
+    List<Seat> updateSeatStatusByIdIn(List<Long> ids, ReservationStatusType status);
+
     Reservation saveReservation(Reservation reservation);
+
+    List<Reservation> saveReservations(List<Reservation> reservations);
 
     List<Reservation> findReservationBySeatId(Long seatId);
 

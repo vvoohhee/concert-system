@@ -1,4 +1,4 @@
-package io.hhplus.concert.domain.balance;
+package io.hhplus.concert.domain.user;
 
 import io.hhplus.concert.common.enums.ErrorCode;
 import io.hhplus.concert.common.exception.CustomException;
@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.coyote.BadRequestException;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -32,6 +31,15 @@ public class Balance {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Version
+    private int version;
+
+    @PrePersist
+    public void prePersist() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
 
     public Balance(Long userId) {
         if (Objects.isNull(userId)) throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);

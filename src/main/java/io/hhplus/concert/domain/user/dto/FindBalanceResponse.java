@@ -1,8 +1,8 @@
-package io.hhplus.concert.domain.balance.dto;
+package io.hhplus.concert.domain.user.dto;
 
 import java.time.LocalDateTime;
 
-public record FindBalanceResponseCommand(
+public record FindBalanceResponse(
         int balance,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
