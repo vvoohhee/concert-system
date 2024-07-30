@@ -33,7 +33,7 @@ public class ConcertServiceTest {
 
     @BeforeEach()
     public void setUp() {
-        this.concert = new Concert(null, "워터밤양갱");
+        this.concert = new Concert(1L, "워터밤양갱");
     }
 
     @Test
@@ -42,7 +42,7 @@ public class ConcertServiceTest {
         LocalDateTime reserveAt = LocalDateTime.of(2024, 9, 1, 20, 0);
 
         ConcertOption option1 = new ConcertOption(
-                null,
+                1L,
                 concert,
                 100000,
                 10,
@@ -99,10 +99,8 @@ public class ConcertServiceTest {
         when(concertRepository.findSeatByIdIn(List.of(seat1.getId()))).thenReturn(List.of(seat1));
         when(concertRepository.saveReservation(any(Reservation.class))).thenReturn(reservation);
 
-        List<Reservation> result = concertService.reserveSeats(List.of(seat1.getId()), 1L);
+        boolean result = concertService.reserveSeats(List.of(seat1.getId()));
 
-        assertEquals(1, result.size());
-        Reservation res = result.get(0);
-        assertEquals(reservation.getSeatId(), res.getSeatId());
+        assertTrue(result);
     }
 }
