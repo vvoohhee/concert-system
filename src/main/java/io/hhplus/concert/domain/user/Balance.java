@@ -32,6 +32,15 @@ public class Balance {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Version
+    private int version;
+
+    @PrePersist
+    public void prePersist() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
     public Balance(Long userId) {
         if (Objects.isNull(userId)) throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
 

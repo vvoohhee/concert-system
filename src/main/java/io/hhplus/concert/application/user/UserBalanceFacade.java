@@ -6,7 +6,6 @@ import io.hhplus.concert.domain.user.UserService;
 import io.hhplus.concert.domain.user.dto.BalanceInfo;
 import io.hhplus.concert.domain.user.dto.RechargeCommand;
 import io.hhplus.concert.domain.user.dto.SaveBalanceHistoryCommand;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +22,6 @@ public class UserBalanceFacade implements UserBalanceService {
     }
 
     @Override
-    @Transactional
     public BalanceInfo rechargeBalance(Long userId, Integer amount) {
         Balance balance = userService.rechargeBalance(new RechargeCommand(userId, amount));
 

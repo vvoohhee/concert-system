@@ -4,6 +4,7 @@ import io.hhplus.concert.common.enums.ErrorCode;
 import io.hhplus.concert.common.exception.CustomException;
 import io.hhplus.concert.domain.user.dto.RechargeCommand;
 import io.hhplus.concert.domain.user.dto.SaveBalanceHistoryCommand;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +20,12 @@ public class UserService {
         return balance;
     }
 
+    @Transactional
     public Balance rechargeBalance(RechargeCommand command) {
         Balance balance = userRepository.findBalanceByUserId(command.userId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NO_DATA));
 
         balance.recharge(command.amount());
-        userRepository.saveBalance(balance);
-
         return balance;
     }
 
