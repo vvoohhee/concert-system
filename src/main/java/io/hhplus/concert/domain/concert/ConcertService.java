@@ -8,11 +8,18 @@ import io.hhplus.concert.domain.concert.dto.SeatPriceInfo;
 import io.hhplus.concert.domain.concert.model.ConcertOption;
 import io.hhplus.concert.domain.concert.model.Reservation;
 import io.hhplus.concert.domain.concert.model.Seat;
+import io.hhplus.concert.infrastructure.config.CacheNameValue;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -29,20 +36,33 @@ public class ConcertService {
      */
     @Transactional
     public List<ConcertOptionInfo> findConcerts(LocalDateTime reserveAt) {
-        List<ConcertOption> concertOptions = concertRepository.findAvailableConcertOptions(reserveAt);
+        Pageable pageable = PageRequest.of(0, 30, Sort.by("startAt"));
+        Long dateTime = reserveAt.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
+        Page<ConcertOption> concertOptions = concertRepository.findAvailableConcertOptions(dateTime, pageable);
 
-        return concertOptions.stream()
-                .map(option -> new ConcertOptionInfo(
-                        option.getId(),
-                        option.getConcert().getTitle(),
-                        option.getPrice(),
-                        option.getSeatQuantity(),
-                        option.getPurchaseLimit(),
-                        option.getReserveFrom(),
-                        option.getReserveUntil(),
-                        option.getStartAt(),
-                        option.getEndAt()))
-                .toList();
+        return concertOptions.map(option -> new ConcertOptionInfo(
+                option.getId(),
+                option.getConcert().getTitle(),
+                option.getPrice(),
+                option.getSeatQuantity(),
+                option.getPurchaseLimit()
+        )).getContent();
+    }
+
+    @Cacheable(cacheNames = CacheNameValue.CONCERTS, key = "#reserveAt", cacheManager = "cacheManager")
+    public List<ConcertOptionInfo> findConcertsWithCache(LocalDateTime reserveAt) {
+        Pageable pageable = PageRequest.of(0, 30, Sort.by("startAt"));
+        Long dateTime = reserveAt.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
+
+        Page<ConcertOption> concertOptions = concertRepository.findAvailableConcertOptions(dateTime, pageable);
+
+        return concertOptions.map(option -> new ConcertOptionInfo(
+                option.getId(),
+                option.getConcert().getTitle(),
+                option.getPrice(),
+                option.getSeatQuantity(),
+                option.getPurchaseLimit()
+        )).getContent();
     }
 
     /**
