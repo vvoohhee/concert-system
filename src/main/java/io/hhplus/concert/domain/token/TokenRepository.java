@@ -7,12 +7,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TokenRepository {
-    List<Token> findAll();
-    Optional<Token> findByToken(String token);
-    List<Token> findByStatus(TokenStatusType status);
+    Boolean issueWaitingToken(Token token);
+    void issueActiveTokens(List<Token> tokens);
+    Long findRank(String token);
+    Optional<Token> findWaitingTokenByToken(String token);
+    Optional<Token> findActiveTokenByToken(String token);
+    Integer findActiveTokenCount();
     List<Token> findByStatusAndExpireAtBefore(TokenStatusType status, LocalDateTime expireAt);
-    List<Token> findByStatusAndAvailableAtBefore(TokenStatusType status, LocalDateTime availableAt);
     Optional<Long> findFirstPositionId();
-    Token save(Token token);
-    List<Token> saveAll(List<Token> tokens);
+    List<String> findAvailableWaitingTokens(int count);
+    void deleteActivatedWaitingToken(int count);
 }
