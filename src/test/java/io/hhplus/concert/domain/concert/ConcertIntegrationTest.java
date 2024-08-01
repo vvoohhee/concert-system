@@ -49,7 +49,7 @@ public class ConcertIntegrationTest {
     @BeforeEach
     public void setUp() {
         Long userId = 1L;
-        Token token = tokenService.issue(userId);
+        Token token = tokenService.issueWaitingToken(userId);
         tokenString = token.getToken();
 
         Concert concert = new Concert(null, "워터밤양갱");

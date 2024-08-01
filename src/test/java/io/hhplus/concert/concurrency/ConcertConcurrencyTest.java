@@ -1,17 +1,12 @@
 package io.hhplus.concert.concurrency;
 
 import io.hhplus.concert.application.concert.UserConcertFacade;
-import io.hhplus.concert.application.concert.UserConcertService;
 import io.hhplus.concert.application.token.UserTokenService;
-import io.hhplus.concert.application.user.UserBalanceFacade;
-import io.hhplus.concert.domain.concert.ConcertRepository;
 import io.hhplus.concert.domain.concert.model.Concert;
 import io.hhplus.concert.domain.concert.model.ConcertOption;
 import io.hhplus.concert.domain.concert.model.Seat;
-import io.hhplus.concert.domain.user.Balance;
 import io.hhplus.concert.domain.user.User;
 import io.hhplus.concert.domain.user.UserRepository;
-import io.hhplus.concert.domain.user.dto.BalanceInfo;
 import io.hhplus.concert.infrastructure.concert.ConcertJpaRepository;
 import io.hhplus.concert.infrastructure.concert.ConcertOptionJpaRepository;
 import io.hhplus.concert.infrastructure.concert.SeatJpaRepository;
@@ -56,7 +51,7 @@ public class ConcertConcurrencyTest {
     public void 콘서트예매_동시성_테스트() throws InterruptedException {
         // 테스트를 위한 데이터 생성
         User user = userRepository.saveUser(new User());
-        String token = userTokenService.issueUserToken(user.getId()).token();
+        String token = userTokenService.issueWaitingToken(user.getId()).token();
 
         Concert concert = concertJpaRepository.save(new Concert("동시성테스트"));
 
