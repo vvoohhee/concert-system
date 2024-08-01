@@ -17,7 +17,8 @@ public class TokenScheduler {
         tokenService.activateToken();
     }
 
-    @Scheduled(fixedRate = 3, timeUnit = TimeUnit.MINUTES)
+//     @Scheduled(fixedRate = 3, timeUnit = TimeUnit.MINUTES)
+//     이제 TTL을 설정해 Redis 토큰 만료(삭제) 처리가 이루어지기 때문에 스케줄러 필요 없음
     public void expire() {
         tokenService.expire();
     }
