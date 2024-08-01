@@ -5,6 +5,6 @@ import io.hhplus.concert.common.enums.TokenStatusType;
 public record TokenInfo(
         String token,
         TokenStatusType status,
-        Integer position
+        Long position
 ) {
 }

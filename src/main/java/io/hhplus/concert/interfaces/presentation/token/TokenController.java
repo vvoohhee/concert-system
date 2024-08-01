@@ -21,7 +21,7 @@ public class TokenController {
     @Operation(summary = "토큰 발급", description = "대기열 토큰 발급")
     public ResponseEntity<IssueTokenDto.Response> issue(@RequestBody IssueTokenDto.Request request) {
         return ResponseEntity.ok(
-                IssueTokenDto.Response.of(userTokenService.issueUserToken(request.userId()))
+                IssueTokenDto.Response.of(userTokenService.issueWaitingToken(request.userId()))
         );
     }
 
@@ -29,7 +29,7 @@ public class TokenController {
     @Operation(summary = "토큰 상태 조회", description = "대기열 토큰의 순서와 상태를 조회")
     public ResponseEntity<TokenStatusDto.Response> find(@RequestHeader("Authorization") String authorization) {
         return ResponseEntity.ok(
-                TokenStatusDto.Response.of(userTokenService.findUserToken(authorization))
+                TokenStatusDto.Response.of(userTokenService.findWaitingToken(authorization))
         );
     }
 }

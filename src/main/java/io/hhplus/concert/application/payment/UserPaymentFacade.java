@@ -27,7 +27,7 @@ public class UserPaymentFacade implements UserPaymentService {
 
     @Override
     public List<TicketInfo> billing(String authorization) {
-        Token token = tokenService.find(authorization);
+        Token token = tokenService.findActiveToken(authorization);
         List<Reservation> reservations = concertService.findUserReservations(token.getUserId());
 
         if (reservations.isEmpty()) {

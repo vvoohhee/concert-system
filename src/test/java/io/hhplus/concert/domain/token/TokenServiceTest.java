@@ -3,7 +3,6 @@ package io.hhplus.concert.domain.token;
 import io.hhplus.concert.common.enums.TokenStatusType;
 import io.hhplus.concert.common.exception.CustomException;
 import io.hhplus.concert.common.exception.NotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +27,7 @@ class TokenServiceTest {
 
     @Test()
     @DisplayName("토큰발급_성공")
-    void issueTest_성공() {
+    void issueWaitingTokenTest_성공() {
         // Given
         Long userId = 1L;
         Token token = new Token(userId);
@@ -39,11 +38,11 @@ class TokenServiceTest {
         Optional<Long> firstPositionId = Optional.of(1L);
 
         // When
-        when(tokenRepository.save(any(Token.class))).thenReturn(savedToken);
+        when(tokenRepository.issueWaitingToken(any(Token.class))).thenReturn(true);
         when(tokenRepository.findFirstPositionId()).thenReturn(firstPositionId);
 
         // When
-        Token issuedToken = tokenService.issue(userId);
+        Token issuedToken = tokenService.issueWaitingToken(userId);
 
         // Then
         assertNotNull(issuedToken);
@@ -53,7 +52,7 @@ class TokenServiceTest {
 
     @Test
     @DisplayName("토큰발급_실패_DB에서_토큰조회_실패")
-    void issueTest_실패_DB에서_토큰조회_실패() {
+    void issueWaitingTokenTest_실패_DB에서_토큰조회_실패() {
         // Given
         Long userId = 1L;
         Token token = new Token(userId);
@@ -62,15 +61,15 @@ class TokenServiceTest {
         savedToken.setId(10L);  // ID 설정
 
         // When
-        when(tokenRepository.save(any(Token.class))).thenReturn(savedToken);
+        when(tokenRepository.issueWaitingToken(any(Token.class))).thenReturn(false);
         when(tokenRepository.findFirstPositionId()).thenReturn(Optional.empty());
 
         // When Then
-        assertThrows(NotFoundException.class, () -> tokenService.issue(1L));
+        assertThrows(NotFoundException.class, () -> tokenService.issueWaitingToken(1L));
     }
 
     @Test
-    void findTest_실패_만료된_토큰을_조회() {
+    void findWaitingTokenTest_실패_만료된_토큰을_조회() {
         // Given
         Long userId = 1L;
         Token token = new Token(userId);
@@ -78,14 +77,14 @@ class TokenServiceTest {
         token.setStatus(TokenStatusType.EXPIRED);
 
         // When
-        when(tokenRepository.findByToken(token.getToken())).thenReturn(Optional.of(token));
+        when(tokenRepository.findWaitingTokenByToken(token.getToken())).thenReturn(Optional.of(token));
 
         // Then
-        assertThrows(CustomException.class, () -> tokenService.find(token.getToken()));
+        assertThrows(CustomException.class, () -> tokenService.findWaitingToken(token.getToken()));
     }
 
     @Test
-    void findTest_실패_토큰_조회_실패() {
+    void findWaitingTokenTest_실패_토큰_조회_실패() {
         // Given
         Long userId = 1L;
         Token token = new Token(userId);
@@ -94,9 +93,9 @@ class TokenServiceTest {
         String tokenString = "없지롱ㅋㅋ";
 
         // When
-        when(tokenRepository.findByToken(tokenString)).thenReturn(Optional.of(token));
+        when(tokenRepository.findWaitingTokenByToken(tokenString)).thenReturn(Optional.of(token));
 
         // Then
-        assertThrows(NotFoundException.class, () -> tokenService.find(tokenString));
+        assertThrows(NotFoundException.class, () -> tokenService.findWaitingToken(tokenString));
     }
 }

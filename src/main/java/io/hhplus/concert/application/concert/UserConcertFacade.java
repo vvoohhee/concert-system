@@ -1,6 +1,5 @@
 package io.hhplus.concert.application.concert;
 
-import io.hhplus.concert.common.enums.ErrorCode;
 import io.hhplus.concert.common.exception.CustomException;
 import io.hhplus.concert.domain.concert.ConcertService;
 import io.hhplus.concert.domain.concert.dto.ConcertOptionInfo;
@@ -39,7 +38,7 @@ public class UserConcertFacade implements UserConcertService {
 
     @Override
     public List<ReservationInfo> reserveSeats(List<Long> seatIdList, String tokenString) {
-        Token token = tokenService.find(tokenString);
+        Token token = tokenService.findActiveToken(tokenString);
         concertService.reserveSeats(seatIdList);
 
         // 좌석 테이블에 비관락을 걸어 예약 상태를 확인 후 좌석을 예약중으로 변경

@@ -5,7 +5,7 @@ import io.hhplus.concert.domain.token.TokenInfo;
 
 
 public class TokenStatusDto {
-    public record Response(TokenStatusType status, int position) {
+    public record Response(TokenStatusType status, Long position) {
         public static Response of(TokenInfo token) {
             return new Response(token.status(), token.position());
         }
