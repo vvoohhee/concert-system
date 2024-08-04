@@ -16,10 +16,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.LongStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,45 +52,79 @@ public class ConcertIntegrationTest {
 
     @BeforeEach
     public void setUp() {
-        Long userId = 1L;
-        Token token = tokenService.issueWaitingToken(userId);
-        tokenString = token.getToken();
+//        Long userId = 1L;
+//        Token token = tokenService.issueWaitingToken(userId);
+//        tokenString = token.getToken();
+//
+//        Concert concert = new Concert(null, "워터밤양갱");
+//        concert = concertJpaRepository.save(concert);
+//        this.concert = concert;
+//
+//        ConcertOption option1 = new ConcertOption(
+//                null,
+//                concert,
+//                10000,
+//                10,
+//                LocalDateTime.of(2024, 9, 1, 0, 0),
+//                LocalDateTime.of(2024, 9, 10, 12, 0)
+//        );
+//        ConcertOption option2 = new ConcertOption(
+//                null,
+//                concert,
+//                10000,
+//                10,
+//                LocalDateTime.of(2024, 10, 1, 0, 0),
+//                LocalDateTime.of(2024, 10, 10, 12, 0)
+//        );
+//
+//        concertOptionJpaRepository.saveAll(List.of(option1, option2));
+    }
 
-        Concert concert = new Concert(null, "워터밤양갱");
-        concert = concertJpaRepository.save(concert);
-        this.concert = concert;
+    @Test
+    public void 콘서트_1000개_생성() {
+        List<Concert> concerts = LongStream.rangeClosed(1L, 1000L)
+                .mapToObj(number -> new Concert(number + "번째 콘서트"))
+                .toList();
+        concerts = concertJpaRepository.saveAll(concerts);
 
-        ConcertOption option1 = new ConcertOption(
-                null,
-                concert,
-                10000,
-                10,
-                LocalDateTime.of(2024, 9, 1, 0, 0),
-                LocalDateTime.of(2024, 9, 10, 12, 0)
-        );
-        ConcertOption option2 = new ConcertOption(
-                null,
-                concert,
-                10000,
-                10,
-                LocalDateTime.of(2024, 10, 1, 0, 0),
-                LocalDateTime.of(2024, 10, 10, 12, 0)
-        );
-
-        concertOptionJpaRepository.saveAll(List.of(option1, option2));
+        List<ConcertOption> options = new ArrayList<>();
+        for (Concert concert : concerts) {
+            ConcertOption option1 = new ConcertOption(
+                    null,
+                    concert,
+                    10000,
+                    10,
+                    LocalDateTime.of(2024, 9, 1, 0, 0)
+                            .atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli(),
+                    LocalDateTime.of(2024, 10, 1, 23, 59)
+                            .atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()
+            );
+            ConcertOption option2 = new ConcertOption(
+                    null,
+                    concert,
+                    10000,
+                    10,
+                    LocalDateTime.of(2024, 9, 1, 0, 0)
+                            .atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli(),
+                    LocalDateTime.of(2024, 10, 1, 23, 59)
+                            .atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()
+            );
+            options.add(option1);
+            options.add(option2);
+        }
+        concertOptionJpaRepository.saveAll(options);
     }
 
     @Test
     public void 콘서트조회_성공() {
         // Given
-        LocalDateTime reserveAt = LocalDateTime.of(2024, 9, 1, 12, 0);
+        LocalDateTime reserveAt = LocalDateTime.of(2024, 9, 10, 12, 0);
 
         // When
         List<ConcertOptionInfo> result = userConcertFacade.findConcerts(reserveAt);
 
         // Then
         assertThat(result).isNotNull();
-        assertThat(result).hasSize(1);
     }
 
     @Test

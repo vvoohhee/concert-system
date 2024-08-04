@@ -1,7 +1,11 @@
 package io.hhplus.concert.domain.concert.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.hhplus.concert.common.enums.ErrorCode;
 import io.hhplus.concert.common.exception.CustomException;
+import io.hhplus.concert.common.util.LocalDateTimeDeserializer;
+import io.hhplus.concert.common.util.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,26 +35,26 @@ public class ConcertOption {
     private Integer purchaseLimit;
 
     @Column(name = "reserve_from", nullable = false)
-    private LocalDateTime reserveFrom;
+    private Long reserveFrom;
 
     @Column(name = "reserve_until", nullable = false)
-    private LocalDateTime reserveUntil;
+    private Long reserveUntil;
 
     @Column(name = "start_at")
-    private LocalDateTime startAt;
+    private Long startAt;
 
     @Column(name = "end_at")
-    private LocalDateTime endAt;
+    private Long endAt;
 
     @Column(name = "created_at",
             nullable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createdAt;
+    private Long createdAt;
 
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
+    private Long updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "concert_id", referencedColumnName = "id")
     private Concert concert;
 
@@ -62,7 +66,7 @@ public class ConcertOption {
         if (Objects.isNull(id)) throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
     }
 
-    public ConcertOption(Long id, Concert concert, Integer price, LocalDateTime reserveFrom, LocalDateTime reserveUntil) {
+    public ConcertOption(Long id, Concert concert, Integer price, Long reserveFrom, Long reserveUntil) {
         validateId(id);
         validateId(concert.getId());
 
@@ -73,11 +77,11 @@ public class ConcertOption {
         this.purchaseLimit = DEFAULT_PURCHASE_LIMIT;
         this.reserveFrom = reserveFrom;
         this.reserveUntil = reserveUntil;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = System.currentTimeMillis();
         this.updatedAt = createdAt;
     }
 
-    public ConcertOption(Long id, Concert concert, Integer price, Integer purchaseLimit, LocalDateTime reserveFrom, LocalDateTime reserveUntil) {
+    public ConcertOption(Long id, Concert concert, Integer price, Integer purchaseLimit, Long reserveFrom, Long reserveUntil) {
         validateId(concert.getId());
 
         this.id = id;
@@ -87,12 +91,13 @@ public class ConcertOption {
         this.purchaseLimit = purchaseLimit;
         this.reserveFrom = reserveFrom;
         this.reserveUntil = reserveUntil;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = System.currentTimeMillis();
         this.updatedAt = createdAt;
     }
 
     public boolean canReserve() {
-        return LocalDateTime.now().isAfter(reserveFrom) && LocalDateTime.now().isBefore(reserveUntil);
+        long now = System.currentTimeMillis();
+        return  now > reserveFrom && now < reserveUntil;
     }
 
     public void checkPurchaseLimit(Integer request) {

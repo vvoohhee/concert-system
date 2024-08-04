@@ -55,7 +55,7 @@ public class ConcertConcurrencyTest {
 
         Concert concert = concertJpaRepository.save(new Concert("동시성테스트"));
 
-        ConcertOption option = new ConcertOption(null, concert, 10000, 10, LocalDateTime.now(), LocalDateTime.now().plusDays(10));
+        ConcertOption option = new ConcertOption(null, concert, 10000, 10, System.currentTimeMillis(), System.currentTimeMillis() + 1000 * 60 * 60 * 24);
         option = concertOptionJpaRepository.save(option);
 
         List<Long> seats = new ArrayList<>();
