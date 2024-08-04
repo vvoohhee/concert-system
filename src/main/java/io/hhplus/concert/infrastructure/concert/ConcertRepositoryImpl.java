@@ -8,6 +8,8 @@ import io.hhplus.concert.domain.concert.model.Reservation;
 import io.hhplus.concert.domain.concert.model.Seat;
 import io.hhplus.concert.infrastructure.concert.dto.SeatPriceProjection;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -23,8 +25,8 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     private final ReservationJpaRepository reservationJpaRepository;
 
     @Override
-    public List<ConcertOption> findAvailableConcertOptions(LocalDateTime reserveAt) {
-        return concertOptionJpaRepository.findAvailableConcertOptions(reserveAt);
+    public Page<ConcertOption> findAvailableConcertOptions(Long reserveAt, Pageable pageable) {
+        return concertOptionJpaRepository.findAvailableConcertOptions(reserveAt, pageable);
     }
 
     @Override

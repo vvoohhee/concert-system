@@ -11,9 +11,11 @@ import io.hhplus.concert.domain.token.Token;
 import io.hhplus.concert.domain.token.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -25,7 +27,7 @@ public class UserConcertFacade implements UserConcertService {
 
     @Override
     public List<ConcertOptionInfo> findConcerts(LocalDateTime reserveAt) {
-        return concertService.findConcerts(reserveAt);
+        return concertService.findConcertsWithCache(reserveAt);
     }
 
     @Override
