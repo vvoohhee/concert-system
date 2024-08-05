@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface UserConcertService {
-    List<ConcertOptionInfo> findConcerts(LocalDateTime startAt);
+    Page<ConcertOptionInfo> findConcerts(LocalDateTime startAt);
 
     List<SeatInfo> findSeats(Long concertOptionId);
 

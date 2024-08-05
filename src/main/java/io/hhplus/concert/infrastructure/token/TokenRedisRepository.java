@@ -230,4 +230,36 @@ public class TokenRedisRepository {
             Thread.currentThread().interrupt();
         }
     }
+
+    /**
+     * Active token을 삭제하는 메서드
+     * @param token
+     * @return 만료 성공 여부 (boolean)
+     */
+    public Boolean expireActiveToken(String token) {
+        Boolean result = redisTemplate.delete(ACTIVE_KEY_PREFIX + token);
+
+        if(Objects.isNull(result)) {
+            waitBeforeRetry();
+            result = redisTemplate.delete(ACTIVE_KEY_PREFIX + token);
+        }
+
+        return result;
+    }
+
+    /**
+     * token:userId 매핑시켰던 데이터를 삭제하는 메서드
+     * @param token
+     * @return 만료 성공 여부 (boolean)
+     */
+    public Boolean deleteTokenUserData(String token) {
+        Boolean result = redisTemplate.delete(token);
+
+        if(Objects.isNull(result)) {
+            waitBeforeRetry();
+            result = redisTemplate.delete(token);
+        }
+
+        return result;
+    }
 }

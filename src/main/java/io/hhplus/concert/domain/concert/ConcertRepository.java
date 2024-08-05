@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ConcertRepository {
-    Page<ConcertOption> findAvailableConcertOptions(Long reserveAt, Pageable pageable);
+    Page<ConcertOption> findAvailableConcertOptions(LocalDateTime reserveAt, Pageable pageable);
 
     List<Seat> findSeatByConcertOptionId(Long concertOptionId);
 

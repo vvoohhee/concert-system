@@ -8,12 +8,12 @@ import io.hhplus.concert.interfaces.presentation.concert.dto.ConcertReserveDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class ConcertController {
 
     @GetMapping("/queue")
     @Operation(summary = "콘서트 리스트 조회", description = "요청한 날짜에 예약 가능한 콘서트 리스트 조회")
-    public ResponseEntity<List<ConcertOptionInfo>> concerts(
+    public ResponseEntity<Page<ConcertOptionInfo>> concerts(
             @RequestParam("at") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime reserveAt
     ) {
         return ResponseEntity.ok(

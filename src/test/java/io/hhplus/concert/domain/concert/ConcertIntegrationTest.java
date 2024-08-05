@@ -6,7 +6,6 @@ import io.hhplus.concert.domain.concert.dto.ReservationInfo;
 import io.hhplus.concert.domain.concert.dto.SeatInfo;
 import io.hhplus.concert.domain.concert.model.Concert;
 import io.hhplus.concert.domain.concert.model.ConcertOption;
-import io.hhplus.concert.domain.token.Token;
 import io.hhplus.concert.domain.token.TokenService;
 import io.hhplus.concert.infrastructure.concert.ConcertJpaRepository;
 import io.hhplus.concert.infrastructure.concert.ConcertOptionJpaRepository;
@@ -19,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -94,20 +92,16 @@ public class ConcertIntegrationTest {
                     concert,
                     10000,
                     10,
-                    LocalDateTime.of(2024, 9, 1, 0, 0)
-                            .atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli(),
+                    LocalDateTime.of(2024, 9, 1, 0, 0),
                     LocalDateTime.of(2024, 10, 1, 23, 59)
-                            .atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()
             );
             ConcertOption option2 = new ConcertOption(
                     null,
                     concert,
                     10000,
                     10,
-                    LocalDateTime.of(2024, 9, 1, 0, 0)
-                            .atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli(),
+                    LocalDateTime.of(2024, 9, 1, 0, 0),
                     LocalDateTime.of(2024, 10, 1, 23, 59)
-                            .atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()
             );
             options.add(option1);
             options.add(option2);
@@ -121,7 +115,7 @@ public class ConcertIntegrationTest {
         LocalDateTime reserveAt = LocalDateTime.of(2024, 9, 10, 12, 0);
 
         // When
-        List<ConcertOptionInfo> result = userConcertFacade.findConcerts(reserveAt);
+        Page<ConcertOptionInfo> result = userConcertFacade.findConcerts(reserveAt);
 
         // Then
         assertThat(result).isNotNull();

@@ -11,15 +11,8 @@ import java.time.LocalDateTime;
 
 public interface ConcertOptionJpaRepository extends JpaRepository<ConcertOption, Long> {
 
-    @Query(value = "SELECT co " +
-            "FROM ConcertOption co " +
-            "WHERE co.reserveFrom < :reserveAt " +
-            "AND co.reserveUntil > :reserveAt",
-            countQuery = "SELECT count(co) " +
-                    "FROM ConcertOption co " +
-                    "WHERE co.reserveFrom < :reserveAt " +
-                    "AND co.reserveUntil > :reserveAt")
-    Page<ConcertOption> findAvailableConcertOptions(@Param("reserveAt") Long reserveAt, Pageable pageable);
+    @Query("SELECT co FROM ConcertOption co WHERE co.reserveFrom < :reserveAt AND co.reserveUntil > :reserveAt")
+    Page<ConcertOption> findAvailableConcertOptions(@Param("reserveAt") LocalDateTime reserveAt, Pageable pageable);
 
     @Query("SELECT co " +
             "FROM ConcertOption co " +

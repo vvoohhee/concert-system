@@ -5,6 +5,7 @@ import io.hhplus.concert.common.enums.TokenStatusType;
 import io.hhplus.concert.common.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class TokenService {
 
@@ -55,6 +57,7 @@ public class TokenService {
 
     /**
      * 토큰으로 ACTIVE 토큰 정보 조회
+     *
      * @param authorization 토큰
      * @return Token 객체
      */
@@ -90,7 +93,7 @@ public class TokenService {
         List<String> waitingTokens = tokenRepository.findAvailableWaitingTokens(Token.ACTIVATABLE_COUNT_PER_MIN);
         Integer activeCount = tokenRepository.findActiveTokenCount();
 
-        if(activeCount > Token.MAX_ACTIVE_LIMIT) return;
+        if (activeCount > Token.MAX_ACTIVE_LIMIT) return;
 
         // 토큰 값으로 토큰을 소유한 회원 정보 조회
         List<Token> tokens = new ArrayList<>();
@@ -102,8 +105,18 @@ public class TokenService {
         tokenRepository.deleteActivatedWaitingToken(tokens.size());
     }
 
-    public void expire() {
-        List<Token> tokens = tokenRepository.findByStatusAndExpireAtBefore(TokenStatusType.AVAILABLE, LocalDateTime.now());
-        tokens.forEach(token -> token.setStatus(TokenStatusType.EXPIRED));
+    /**
+     * 결제 완료 시에 토큰을 만료
+     */
+    public void deleteActiveToken(String authorization) {
+        Boolean tokenDeleteResult = tokenRepository.deleteActiveToken(authorization);
+
+        if (tokenDeleteResult) log.info("[결제API][토큰: {}] 레디스에서 토큰 삭제 성공", authorization);
+        else log.info("[결제API][토큰: {}] 레디스에서 토큰 삭제 실패", authorization);
+
+        Boolean tokenUserDataDeleteResult = tokenRepository.deleteTokenUserData(authorization);
+
+        if (tokenUserDataDeleteResult) log.info("[결제API][토큰: {}] 레디스에서 토큰-유저 매핑 데이터 삭제 성공", authorization);
+        else log.info("[결제API][토큰: {}] 레디스에서 토큰-유저 매핑 데이터 삭제 실패", authorization);
     }
 }

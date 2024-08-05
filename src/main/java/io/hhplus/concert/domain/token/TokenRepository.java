@@ -17,4 +17,6 @@ public interface TokenRepository {
     Optional<Long> findFirstPositionId();
     List<String> findAvailableWaitingTokens(int count);
     void deleteActivatedWaitingToken(int count);
+    Boolean deleteActiveToken(String token);
+    Boolean deleteTokenUserData(String token);
 }

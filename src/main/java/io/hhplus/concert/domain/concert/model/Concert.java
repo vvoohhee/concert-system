@@ -1,9 +1,5 @@
 package io.hhplus.concert.domain.concert.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.hhplus.concert.common.util.LocalDateTimeDeserializer;
-import io.hhplus.concert.common.util.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,12 +21,12 @@ public class Concert {
     @Column(name = "created_at",
             nullable = false,
             updatable = false)
-    private Long createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at",
             nullable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private Long updatedAt;
+    private LocalDateTime updatedAt;
 
     public Concert(Long id, String title) {
         this.id = id;
@@ -43,7 +39,7 @@ public class Concert {
 
     @PrePersist
     public void onCreate() {
-        this.createdAt = System.currentTimeMillis();
+        this.createdAt = LocalDateTime.now();
         this.updatedAt = createdAt;
     }
 }

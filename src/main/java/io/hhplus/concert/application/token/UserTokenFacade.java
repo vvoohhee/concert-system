@@ -50,7 +50,7 @@ public class UserTokenFacade implements UserTokenService {
     }
 
     @Override
-    public void expire() {
-        tokenService.expire();
+    public void expire(String authorization) {
+        tokenService.deleteActiveToken(authorization);
     }
 }

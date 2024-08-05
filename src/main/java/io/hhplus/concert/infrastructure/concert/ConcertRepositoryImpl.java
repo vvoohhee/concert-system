@@ -25,7 +25,7 @@ public class ConcertRepositoryImpl implements ConcertRepository {
     private final ReservationJpaRepository reservationJpaRepository;
 
     @Override
-    public Page<ConcertOption> findAvailableConcertOptions(Long reserveAt, Pageable pageable) {
+    public Page<ConcertOption> findAvailableConcertOptions(LocalDateTime reserveAt, Pageable pageable) {
         return concertOptionJpaRepository.findAvailableConcertOptions(reserveAt, pageable);
     }
 

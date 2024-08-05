@@ -16,7 +16,7 @@ import java.util.UUID;
 public class LoggingFilter implements Filter {
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
         String uuid = UUID.randomUUID().toString();
 
@@ -30,6 +30,8 @@ public class LoggingFilter implements Filter {
 
         log.info("[ID : {}][METHOD : {}][URL : {}]", uuid, httpMethod, requestUrl);
         log.info("[REQUEST BODY : {}]", requestBody);
+
+        filterChain.doFilter(servletRequest, servletResponse);
 
         // response 로그 처리
         HttpServletResponse response = (HttpServletResponse) servletResponse;

@@ -5,6 +5,7 @@ import io.hhplus.concert.domain.concert.ConcertService;
 import io.hhplus.concert.domain.concert.dto.ConcertOptionInfo;
 import io.hhplus.concert.domain.concert.dto.ReservationInfo;
 import io.hhplus.concert.domain.concert.dto.SeatInfo;
+import io.hhplus.concert.domain.concert.model.ConcertOption;
 import io.hhplus.concert.domain.concert.model.Reservation;
 import io.hhplus.concert.domain.concert.model.Seat;
 import io.hhplus.concert.domain.token.Token;
@@ -26,8 +27,9 @@ public class UserConcertFacade implements UserConcertService {
     private final ConcertService concertService;
 
     @Override
-    public List<ConcertOptionInfo> findConcerts(LocalDateTime reserveAt) {
-        return concertService.findConcertsWithCache(reserveAt);
+    public Page<ConcertOptionInfo> findConcerts(LocalDateTime reserveAt) {
+        Page<ConcertOption> result =  concertService.findConcertsWithCache(reserveAt);
+        return result.map(co -> new ConcertOptionInfo(co.getId(), co.getConcert().getTitle(), co.getPrice(), co.getSeatQuantity(), co.getPurchaseLimit()));
     }
 
     @Override

@@ -45,6 +45,16 @@ public class TokenRepositoryImpl implements TokenRepository {
     }
 
     @Override
+    public Boolean deleteActiveToken(String token) {
+        return repository.expireActiveToken(token);
+    }
+
+    @Override
+    public Boolean deleteTokenUserData(String token) {
+        return repository.deleteTokenUserData(token);
+    }
+
+    @Override
     public Optional<Token> findWaitingTokenByToken(String token) {
         return repository.findWaitingTokenByToken(token);
     }

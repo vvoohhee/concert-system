@@ -8,5 +8,5 @@ public interface UserTokenService {
     TokenInfo findActiveToken(String authorization);
     boolean isAvailableToken(String authorization);
     void activateToken();
-    void expire();
+    void expire(String authorization);
 }

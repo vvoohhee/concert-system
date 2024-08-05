@@ -3,8 +3,10 @@ package io.hhplus.concert.domain.concert;
 import io.hhplus.concert.common.enums.ErrorCode;
 import io.hhplus.concert.common.enums.ReservationStatusType;
 import io.hhplus.concert.common.exception.CustomException;
+import io.hhplus.concert.common.util.RestPage;
 import io.hhplus.concert.domain.concert.dto.ConcertOptionInfo;
 import io.hhplus.concert.domain.concert.dto.SeatPriceInfo;
+import io.hhplus.concert.domain.concert.model.Concert;
 import io.hhplus.concert.domain.concert.model.ConcertOption;
 import io.hhplus.concert.domain.concert.model.Reservation;
 import io.hhplus.concert.domain.concert.model.Seat;
@@ -35,10 +37,10 @@ public class ConcertService {
      * @return List<ConcertOption> 콘서트 공연(회차) 리스트
      */
     @Transactional
-    public List<ConcertOptionInfo> findConcerts(LocalDateTime reserveAt) {
+    public Page<ConcertOptionInfo> findConcerts(LocalDateTime reserveAt) {
         Pageable pageable = PageRequest.of(0, 30, Sort.by("startAt"));
-        Long dateTime = reserveAt.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
-        Page<ConcertOption> concertOptions = concertRepository.findAvailableConcertOptions(dateTime, pageable);
+//        Long dateTime = reserveAt.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
+        Page<ConcertOption> concertOptions = concertRepository.findAvailableConcertOptions(reserveAt, pageable);
 
         return concertOptions.map(option -> new ConcertOptionInfo(
                 option.getId(),
@@ -46,23 +48,24 @@ public class ConcertService {
                 option.getPrice(),
                 option.getSeatQuantity(),
                 option.getPurchaseLimit()
-        )).getContent();
+        ));
     }
 
     @Cacheable(cacheNames = CacheNameValue.CONCERTS, key = "#reserveAt", cacheManager = "cacheManager")
-    public List<ConcertOptionInfo> findConcertsWithCache(LocalDateTime reserveAt) {
+    public Page<ConcertOption> findConcertsWithCache(LocalDateTime reserveAt) {
         Pageable pageable = PageRequest.of(0, 30, Sort.by("startAt"));
-        Long dateTime = reserveAt.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
+        Page<ConcertOption> concertOptions = concertRepository.findAvailableConcertOptions(reserveAt, pageable);
 
-        Page<ConcertOption> concertOptions = concertRepository.findAvailableConcertOptions(dateTime, pageable);
+        RestPage<ConcertOption> concertOptionRestPage = new RestPage<>(concertOptions);
+        return concertOptionRestPage;
 
-        return concertOptions.map(option -> new ConcertOptionInfo(
-                option.getId(),
-                option.getConcert().getTitle(),
-                option.getPrice(),
-                option.getSeatQuantity(),
-                option.getPurchaseLimit()
-        )).getContent();
+//        return concertOptions.map(option -> new ConcertOptionInfo(
+//                option.getId(),
+//                option.getConcert().getTitle(),
+//                option.getPrice(),
+//                option.getSeatQuantity(),
+//                option.getPurchaseLimit()
+//        ));
     }
 
     /**
