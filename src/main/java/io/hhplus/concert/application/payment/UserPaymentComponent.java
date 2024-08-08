@@ -23,9 +23,6 @@ public class UserPaymentComponent {
         for (SeatPriceInfo seatPriceInfo : priceInfos) totalPrice += seatPriceInfo.price();
 
         userService.consumeBalance(userId, totalPrice);
-        List<Ticket> tickets = paymentService.billing(userId, priceInfos);
-        paymentService.savePaymentHistories(tickets);
-
-        return tickets;
+        return paymentService.billing(userId, priceInfos);
     }
 }
