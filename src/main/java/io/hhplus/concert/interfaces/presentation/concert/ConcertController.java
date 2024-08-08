@@ -2,7 +2,8 @@ package io.hhplus.concert.interfaces.presentation.concert;
 
 
 import io.hhplus.concert.application.concert.UserConcertService;
-import io.hhplus.concert.domain.concert.dto.ConcertOptionInfo;
+import io.hhplus.concert.interfaces.presentation.concert.dto.ConcertOptionDto;
+import io.hhplus.concert.interfaces.presentation.concert.dto.ConcertsDto;
 import io.hhplus.concert.interfaces.presentation.concert.dto.GetConcertSeatListDto;
 import io.hhplus.concert.interfaces.presentation.concert.dto.ConcertReserveDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,11 +27,23 @@ public class ConcertController {
 
     @GetMapping("/queue")
     @Operation(summary = "콘서트 리스트 조회", description = "요청한 날짜에 예약 가능한 콘서트 리스트 조회")
-    public ResponseEntity<Page<ConcertOptionInfo>> concerts(
+    public ResponseEntity<Page<ConcertsDto.Response>> concerts(
             @RequestParam("at") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime reserveAt
     ) {
         return ResponseEntity.ok(
-                userConcertService.findConcerts(reserveAt)
+                ConcertsDto.Response.of(userConcertService.findConcerts(reserveAt))
+        );
+    }
+
+    @GetMapping("/queue/options")
+    @Operation(summary = "콘서트 옵션 리스트 조회")
+    public ResponseEntity<List<ConcertOptionDto>> concertOptions(
+            @RequestParam("concert") Long concertId
+    ) {
+        return ResponseEntity.ok(
+                userConcertService.findConcertOptions(concertId).stream()
+                        .map(ConcertOptionDto::of)
+                        .toList()
         );
     }
 

@@ -30,12 +30,6 @@ public class ConcertOption {
     @Column(name = "purchase_limit")
     private Integer purchaseLimit;
 
-    @Column(name = "reserve_from", nullable = false)
-    private LocalDateTime reserveFrom;
-
-    @Column(name = "reserve_until", nullable = false)
-    private LocalDateTime reserveUntil;
-
     @Column(name = "start_at")
     private LocalDateTime startAt;
 
@@ -50,9 +44,8 @@ public class ConcertOption {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "concert_id", referencedColumnName = "id")
-    private Concert concert;
+    @Column(name = "concert_id", nullable = false)
+    private Long concertId;
 
     public static int DEFAULT_SEAT_QUANTITY = 50;
 
@@ -62,41 +55,43 @@ public class ConcertOption {
         if (Objects.isNull(id)) throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
     }
 
-    public ConcertOption(Long id, Concert concert, Integer price, LocalDateTime reserveFrom, LocalDateTime reserveUntil) {
+    public ConcertOption(Long id, Concert concert, Integer price) {
         validateId(id);
         validateId(concert.getId());
 
         this.id = id;
-        this.concert = concert;
+        this.concertId = concert.getId();
         this.price = price;
         this.seatQuantity = DEFAULT_SEAT_QUANTITY;
         this.purchaseLimit = DEFAULT_PURCHASE_LIMIT;
-        this.reserveFrom = reserveFrom;
-        this.reserveUntil = reserveUntil;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = createdAt;
     }
 
-    public ConcertOption(Long id, Concert concert, Integer price, Integer purchaseLimit, LocalDateTime reserveFrom, LocalDateTime reserveUntil) {
+    public ConcertOption(Long id, Concert concert, Integer price, Integer purchaseLimit) {
         validateId(concert.getId());
 
         this.id = id;
-        this.concert = concert;
+        this.concertId = concert.getId();
         this.price = price;
         this.seatQuantity = DEFAULT_SEAT_QUANTITY;
         this.purchaseLimit = purchaseLimit;
-        this.reserveFrom = reserveFrom;
-        this.reserveUntil = reserveUntil;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = createdAt;
     }
 
-    public boolean canReserve() {
-        LocalDateTime now = LocalDateTime.now();
-        return  now.isAfter(reserveFrom) && now.isBefore(reserveUntil);
+    public ConcertOption(Long concertId, Integer price, LocalDateTime startAt, LocalDateTime endAt) {
+        this.concertId = concertId;
+        this.price = price;
+        this.seatQuantity = DEFAULT_SEAT_QUANTITY;
+        this.purchaseLimit = DEFAULT_PURCHASE_LIMIT;
+        this.startAt = startAt;
+        this.endAt = endAt;
     }
 
     public void checkPurchaseLimit(Integer request) {
         if (request > purchaseLimit) throw new CustomException(ErrorCode.RESERVATION_LIMIT_EXCEEDED);
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = createdAt;
     }
 }

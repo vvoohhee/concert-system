@@ -2,9 +2,9 @@ package io.hhplus.concert.application.concert;
 
 import io.hhplus.concert.common.exception.CustomException;
 import io.hhplus.concert.domain.concert.ConcertService;
-import io.hhplus.concert.domain.concert.dto.ConcertOptionInfo;
 import io.hhplus.concert.domain.concert.dto.ReservationInfo;
 import io.hhplus.concert.domain.concert.dto.SeatInfo;
+import io.hhplus.concert.domain.concert.model.Concert;
 import io.hhplus.concert.domain.concert.model.ConcertOption;
 import io.hhplus.concert.domain.concert.model.Reservation;
 import io.hhplus.concert.domain.concert.model.Seat;
@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -27,9 +26,15 @@ public class UserConcertFacade implements UserConcertService {
     private final ConcertService concertService;
 
     @Override
-    public Page<ConcertOptionInfo> findConcerts(LocalDateTime reserveAt) {
-        Page<ConcertOption> result =  concertService.findConcertsWithCache(reserveAt);
-        return result.map(co -> new ConcertOptionInfo(co.getId(), co.getConcert().getTitle(), co.getPrice(), co.getSeatQuantity(), co.getPurchaseLimit()));
+    public Page<Concert> findConcerts(LocalDateTime reserveAt) {
+        Page<Concert> result =  concertService.findConcertsWithCache(reserveAt);
+        return result;
+    }
+
+
+    @Override
+    public List<ConcertOption> findConcertOptions(Long concertId) {
+        return concertService.findConcertOptions(concertId);
     }
 
     @Override

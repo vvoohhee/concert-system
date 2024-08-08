@@ -18,6 +18,13 @@ public class Concert {
     @Column(nullable = false)
     private String title;
 
+    @Column(name = "reserve_from", nullable = false)
+    private LocalDateTime reserveFrom;
+
+    @Column(name = "reserve_until", nullable = false)
+    private LocalDateTime reserveUntil;
+
+
     @Column(name = "created_at",
             nullable = false,
             updatable = false)
@@ -35,6 +42,12 @@ public class Concert {
 
     public Concert(String title) {
         this.title = title;
+    }
+
+    public Concert(String title, LocalDateTime reserveFrom, LocalDateTime reserveUntil) {
+        this.title = title;
+        this.reserveFrom = reserveFrom;
+        this.reserveUntil = reserveUntil;
     }
 
     @PrePersist

@@ -21,7 +21,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -31,41 +30,41 @@ public class ConcertService {
     private final ConcertRepository concertRepository;
 
     /**
-     * 콘서트 공연(회차) 리스트 조회
+     * 콘서트 리스트 조회
      *
      * @param reserveAt 예약할 날짜 일시
      * @return List<ConcertOption> 콘서트 공연(회차) 리스트
      */
     @Transactional
-    public Page<ConcertOptionInfo> findConcerts(LocalDateTime reserveAt) {
+    public Page<Concert> findConcerts(LocalDateTime reserveAt) {
         Pageable pageable = PageRequest.of(0, 30, Sort.by("startAt"));
-//        Long dateTime = reserveAt.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
-        Page<ConcertOption> concertOptions = concertRepository.findAvailableConcertOptions(reserveAt, pageable);
+        Page<Concert> concerts = concertRepository.findAvailableConcerts(reserveAt, pageable);
 
-        return concertOptions.map(option -> new ConcertOptionInfo(
-                option.getId(),
-                option.getConcert().getTitle(),
-                option.getPrice(),
-                option.getSeatQuantity(),
-                option.getPurchaseLimit()
-        ));
+        return new RestPage<>(concerts);
     }
 
+    /**
+     * 캐시를 이용한 콘서트 리스트 조회
+     *
+     * @param reserveAt 예약할 날짜 일시
+     * @return List<ConcertOption> 콘서트 공연(회차) 리스트
+     */
     @Cacheable(cacheNames = CacheNameValue.CONCERTS, key = "#reserveAt", cacheManager = "cacheManager")
-    public Page<ConcertOption> findConcertsWithCache(LocalDateTime reserveAt) {
+    public Page<Concert> findConcertsWithCache(LocalDateTime reserveAt) {
         Pageable pageable = PageRequest.of(0, 30, Sort.by("startAt"));
-        Page<ConcertOption> concertOptions = concertRepository.findAvailableConcertOptions(reserveAt, pageable);
+        Page<Concert> concerts = concertRepository.findAvailableConcerts(reserveAt, pageable);
 
-        RestPage<ConcertOption> concertOptionRestPage = new RestPage<>(concertOptions);
-        return concertOptionRestPage;
+        return new RestPage<>(concerts);
+    }
 
-//        return concertOptions.map(option -> new ConcertOptionInfo(
-//                option.getId(),
-//                option.getConcert().getTitle(),
-//                option.getPrice(),
-//                option.getSeatQuantity(),
-//                option.getPurchaseLimit()
-//        ));
+    /**
+     * 특정 콘서트의 옵션(공연) 리스트 조회
+     * @param concertId
+     * @return ConcertOptions 리스트
+     */
+    @Transactional
+    public List<ConcertOption> findConcertOptions(Long concertId) {
+        return concertRepository.findConcertOptionsByConcertId(concertId);
     }
 
     /**

@@ -25,6 +25,10 @@ public class RestPage<T> extends PageImpl<T> {
         super(page.getContent(), page.getPageable(), page.getTotalElements());
     }
 
+    public RestPage(List<T> content, Pageable pageable) {
+        super(content, pageable, pageable.getPageSize());
+    }
+
     @Override
     @JsonIgnore
     public Pageable getPageable() {

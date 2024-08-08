@@ -3,10 +3,10 @@ package io.hhplus.concert.infrastructure.concert;
 import io.hhplus.concert.common.enums.ReservationStatusType;
 import io.hhplus.concert.domain.concert.ConcertRepository;
 import io.hhplus.concert.domain.concert.dto.SeatPriceInfo;
+import io.hhplus.concert.domain.concert.model.Concert;
 import io.hhplus.concert.domain.concert.model.ConcertOption;
 import io.hhplus.concert.domain.concert.model.Reservation;
 import io.hhplus.concert.domain.concert.model.Seat;
-import io.hhplus.concert.infrastructure.concert.dto.SeatPriceProjection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,18 +20,19 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ConcertRepositoryImpl implements ConcertRepository {
 
+    private final ConcertJpaRepository concertJpaRepository;
     private final ConcertOptionJpaRepository concertOptionJpaRepository;
     private final SeatJpaRepository seatJpaRepository;
     private final ReservationJpaRepository reservationJpaRepository;
 
     @Override
-    public Page<ConcertOption> findAvailableConcertOptions(LocalDateTime reserveAt, Pageable pageable) {
-        return concertOptionJpaRepository.findAvailableConcertOptions(reserveAt, pageable);
+    public Page<Concert> findAvailableConcerts(LocalDateTime reserveAt, Pageable pageable) {
+        return concertJpaRepository.findAvailableConcerts(reserveAt, pageable);
     }
 
     @Override
     public List<Seat> findSeatByConcertOptionId(Long concertOptionId) {
-        return seatJpaRepository.findByConcertOptionId(concertOptionId);
+        return seatJpaRepository.findByConcertOptionIdOrderByNumberAsc(concertOptionId);
     }
 
     @Override
@@ -86,5 +87,10 @@ public class ConcertRepositoryImpl implements ConcertRepository {
                 .stream()
                 .map(p -> new SeatPriceInfo(p.getSeatId(), p.getPrice()))
                 .toList();
+    }
+
+    @Override
+    public List<ConcertOption> findConcertOptionsByConcertId(Long concertId) {
+        return concertOptionJpaRepository.findByConcertId(concertId);
     }
 }

@@ -2,6 +2,7 @@ package io.hhplus.concert.domain.concert;
 
 import io.hhplus.concert.common.enums.ReservationStatusType;
 import io.hhplus.concert.domain.concert.dto.SeatPriceInfo;
+import io.hhplus.concert.domain.concert.model.Concert;
 import io.hhplus.concert.domain.concert.model.ConcertOption;
 import io.hhplus.concert.domain.concert.model.Reservation;
 import io.hhplus.concert.domain.concert.model.Seat;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ConcertRepository {
-    Page<ConcertOption> findAvailableConcertOptions(LocalDateTime reserveAt, Pageable pageable);
+    Page<Concert> findAvailableConcerts(LocalDateTime reserveAt, Pageable pageable);
 
     List<Seat> findSeatByConcertOptionId(Long concertOptionId);
 
@@ -36,4 +37,6 @@ public interface ConcertRepository {
     void deleteReservationById(Long id);
 
     List<SeatPriceInfo> findSeatPriceInfoBySeatIdIn(List<Long> seatIds);
+
+    List<ConcertOption> findConcertOptionsByConcertId(Long concertId);
 }
