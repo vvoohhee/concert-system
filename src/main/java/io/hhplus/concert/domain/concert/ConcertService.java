@@ -3,13 +3,21 @@ package io.hhplus.concert.domain.concert;
 import io.hhplus.concert.common.enums.ErrorCode;
 import io.hhplus.concert.common.enums.ReservationStatusType;
 import io.hhplus.concert.common.exception.CustomException;
+import io.hhplus.concert.common.util.RestPage;
 import io.hhplus.concert.domain.concert.dto.ConcertOptionInfo;
 import io.hhplus.concert.domain.concert.dto.SeatPriceInfo;
+import io.hhplus.concert.domain.concert.model.Concert;
 import io.hhplus.concert.domain.concert.model.ConcertOption;
 import io.hhplus.concert.domain.concert.model.Reservation;
 import io.hhplus.concert.domain.concert.model.Seat;
+import io.hhplus.concert.infrastructure.config.CacheNameValue;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,27 +30,41 @@ public class ConcertService {
     private final ConcertRepository concertRepository;
 
     /**
-     * 콘서트 공연(회차) 리스트 조회
+     * 콘서트 리스트 조회
      *
      * @param reserveAt 예약할 날짜 일시
      * @return List<ConcertOption> 콘서트 공연(회차) 리스트
      */
     @Transactional
-    public List<ConcertOptionInfo> findConcerts(LocalDateTime reserveAt) {
-        List<ConcertOption> concertOptions = concertRepository.findAvailableConcertOptions(reserveAt);
+    public Page<Concert> findConcerts(LocalDateTime reserveAt) {
+        Pageable pageable = PageRequest.of(0, 30, Sort.by("startAt"));
+        Page<Concert> concerts = concertRepository.findAvailableConcerts(reserveAt, pageable);
 
-        return concertOptions.stream()
-                .map(option -> new ConcertOptionInfo(
-                        option.getId(),
-                        option.getConcert().getTitle(),
-                        option.getPrice(),
-                        option.getSeatQuantity(),
-                        option.getPurchaseLimit(),
-                        option.getReserveFrom(),
-                        option.getReserveUntil(),
-                        option.getStartAt(),
-                        option.getEndAt()))
-                .toList();
+        return new RestPage<>(concerts);
+    }
+
+    /**
+     * 캐시를 이용한 콘서트 리스트 조회
+     *
+     * @param reserveAt 예약할 날짜 일시
+     * @return List<ConcertOption> 콘서트 공연(회차) 리스트
+     */
+    @Cacheable(cacheNames = CacheNameValue.CONCERTS, key = "#reserveAt", cacheManager = "cacheManager")
+    public Page<Concert> findConcertsWithCache(LocalDateTime reserveAt) {
+        Pageable pageable = PageRequest.of(0, 30, Sort.by("startAt"));
+        Page<Concert> concerts = concertRepository.findAvailableConcerts(reserveAt, pageable);
+
+        return new RestPage<>(concerts);
+    }
+
+    /**
+     * 특정 콘서트의 옵션(공연) 리스트 조회
+     * @param concertId
+     * @return ConcertOptions 리스트
+     */
+    @Transactional
+    public List<ConcertOption> findConcertOptions(Long concertId) {
+        return concertRepository.findConcertOptionsByConcertId(concertId);
     }
 
     /**

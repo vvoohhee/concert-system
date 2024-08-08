@@ -16,9 +16,4 @@ public class TokenScheduler {
     public void activateToken() {
         tokenService.activateToken();
     }
-
-    @Scheduled(fixedRate = 3, timeUnit = TimeUnit.MINUTES)
-    public void expire() {
-        tokenService.expire();
-    }
 }

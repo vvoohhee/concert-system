@@ -1,11 +1,11 @@
 package io.hhplus.concert.common.enums;
 
 public enum ReservationStatusType {
-    AVAILABLE(0),
-    TEMPORARY(1),
-    DONE(2);
+    AVAILABLE("AVAILABLE"),
+    TEMPORARY("TEMPORARY"),
+    DONE("DONE");
 
-    ReservationStatusType(int code) {
+    ReservationStatusType(String value) {
     }
 
 }

@@ -3,9 +3,10 @@ package io.hhplus.concert.application.token;
 import io.hhplus.concert.domain.token.TokenInfo;
 
 public interface UserTokenService {
-    TokenInfo issueUserToken(Long userId);
-    TokenInfo findUserToken(String authorization);
+    TokenInfo issueWaitingToken(Long userId);
+    TokenInfo findWaitingToken(String authorization);
+    TokenInfo findActiveToken(String authorization);
     boolean isAvailableToken(String authorization);
     void activateToken();
-    void expire();
+    void expire(String authorization);
 }

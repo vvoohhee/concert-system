@@ -1,42 +1,30 @@
 package io.hhplus.concert.interfaces.presentation.concert.dto;
 
-import io.hhplus.concert.domain.concert.dto.ConcertOptionInfo;
+import io.hhplus.concert.common.util.RestPage;
+import io.hhplus.concert.domain.concert.model.Concert;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class ConcertsDto {
     public record Response(
-            List<ConcertOptionDto> concertOptionDtoList
-    ) {
-        public static Response of(List<ConcertOptionInfo> options) {
-            List<ConcertOptionDto> concertOptionDtoList = options.stream()
-                    .map(option -> new ConcertOptionDto(
-                            option.id(),
-                            option.concertTitle(),
-                            option.price(),
-                            option.seatQuantity(),
-                            option.purchaseLimit(),
-                            option.reserveFrom(),
-                            option.reserveUntil(),
-                            option.startAt(),
-                            option.endAt()))
-                    .toList();
-
-            return new Response(concertOptionDtoList);
-        }
-    }
-
-    public record ConcertOptionDto(
             Long id,
             String concertTitle,
-            Integer price,
-            int seatQuantity,
-            int purchaseLimit,
             LocalDateTime reserveFrom,
-            LocalDateTime reserveUntil,
-            LocalDateTime startAt,
-            LocalDateTime endAt
+            LocalDateTime reserveUntil
     ) {
+        public static Page<Response> of(Page<Concert> page) {
+            List<Response> responses = page.getContent().stream()
+                    .map(concert ->
+                            new Response(concert.getId(),
+                                    concert.getTitle(),
+                                    concert.getReserveFrom(),
+                                    concert.getReserveUntil()))
+                    .toList();
+
+            return new RestPage<>(responses, page.getPageable());
+        }
     }
 }

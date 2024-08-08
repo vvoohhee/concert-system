@@ -1,10 +1,8 @@
 package io.hhplus.concert.application.payment;
 
-import io.hhplus.concert.domain.user.UserService;
 import io.hhplus.concert.domain.concert.ConcertService;
 import io.hhplus.concert.domain.concert.dto.SeatPriceInfo;
 import io.hhplus.concert.domain.concert.model.Reservation;
-import io.hhplus.concert.domain.payment.PaymentService;
 import io.hhplus.concert.domain.payment.Ticket;
 import io.hhplus.concert.domain.payment.dto.TicketInfo;
 import io.hhplus.concert.domain.token.Token;
@@ -22,12 +20,10 @@ public class UserPaymentFacade implements UserPaymentService {
     private final TokenService tokenService;
     private final ConcertService concertService;
     private final UserPaymentComponent userPaymentComponent;
-    private final UserService userService;
-    private final PaymentService paymentService;
 
     @Override
     public List<TicketInfo> billing(String authorization) {
-        Token token = tokenService.find(authorization);
+        Token token = tokenService.findActiveToken(authorization);
         List<Reservation> reservations = concertService.findUserReservations(token.getUserId());
 
         if (reservations.isEmpty()) {
@@ -43,10 +39,12 @@ public class UserPaymentFacade implements UserPaymentService {
         // 결제와 관련되어 Transaction으로 묶여야하는 메서드 3개를 하나의 컴포넌트로 묶음
         List<Ticket> tickets = userPaymentComponent.updatePaymentData(token.getUserId(), priceInfos);
 
+        // 결제 완료 시 토큰 만료
+        tokenService.deleteActiveToken(authorization);
+
         return tickets
                 .stream()
                 .map(ticket -> new TicketInfo(ticket.getId(), ticket.getSeatId(), ticket.getPrice()))
                 .toList();
-
     }
 }

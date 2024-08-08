@@ -1,9 +1,12 @@
 package io.hhplus.concert.application.token;
 
+import io.hhplus.concert.common.enums.ErrorCode;
+import io.hhplus.concert.common.enums.TokenStatusType;
+import io.hhplus.concert.common.exception.CustomException;
 import io.hhplus.concert.domain.token.Token;
 import io.hhplus.concert.domain.token.TokenInfo;
 import io.hhplus.concert.domain.token.TokenService;
-import jakarta.transaction.Transactional;
+import io.hhplus.concert.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -11,26 +14,34 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserTokenFacade implements UserTokenService {
     private final TokenService tokenService;
+    private final UserService userService;
 
     @Override
-    public TokenInfo issueUserToken(Long userId) {
-        Token token = tokenService.issue(userId);
+    public TokenInfo issueWaitingToken(Long userId) {
+        // 토큰 생성 전에 유효한 유저의 요청인지 확인
+        if(userService.findUser(userId).isEmpty()) throw new CustomException(ErrorCode.NO_DATA);
+
+        Token token = tokenService.issueWaitingToken(userId);
+        token = tokenService.findWaitingToken(token.getToken());
         return new TokenInfo(token.getToken(), token.getStatus(), token.getPosition());
     }
 
     @Override
-    public TokenInfo findUserToken(String tokenString) {
-        Token token = tokenService.find(tokenString);
+    public TokenInfo findWaitingToken(String tokenString) {
+        Token token = tokenService.findWaitingToken(tokenString);
+        return new TokenInfo(token.getToken(), token.getStatus(), token.getPosition());
+    }
+
+    @Override
+    public TokenInfo findActiveToken(String authorization) {
+        Token token = tokenService.findActiveToken(authorization);
+        token.setStatus(TokenStatusType.AVAILABLE);
         return new TokenInfo(token.getToken(), token.getStatus(), token.getPosition());
     }
 
     @Override
     public boolean isAvailableToken(String authorization) {
-        boolean isAvailable = tokenService.isAvailable(authorization);
-
-        if (isAvailable) tokenService.updateLastRequestTime(authorization);
-
-        return isAvailable;
+        return tokenService.isAvailable(authorization);
     }
 
     @Override
@@ -39,7 +50,7 @@ public class UserTokenFacade implements UserTokenService {
     }
 
     @Override
-    public void expire() {
-        tokenService.expire();
+    public void expire(String authorization) {
+        tokenService.deleteActiveToken(authorization);
     }
 }

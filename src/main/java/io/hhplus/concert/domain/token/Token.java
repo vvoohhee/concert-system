@@ -49,13 +49,16 @@ public class Token {
 
     // 사용자의 대기 순번
     @Transient
-    private Integer position;
+    private Long position;
 
-    // 처리할 수 있는 최대 사용자 수
-    public final static int MAX_AVAILABLE_COUNT = 50;
+    // 한 번에 ACTIVE 상태로 바꿀 수 있는 개수
+    public final static int ACTIVATABLE_COUNT_PER_MIN = 5;
+
+    // ACTIVE 토큰의 최대 개수
+    public final static int MAX_ACTIVE_LIMIT = 50;
 
     // 사용자의 처리 기간
-    public final static int DURATION_MIN = 10;
+    public final static long TTL_MIN = 5;
 
     private void validateId(Long id) {
         if (Objects.isNull(id)) throw new CustomException(ErrorCode.ILLEGAL_ARGUMENT);
@@ -71,12 +74,18 @@ public class Token {
         this.createdAt = LocalDateTime.now();
     }
 
+    public Token(String token, Long userId) {
+        validateId(userId);
+        this.token = token;
+        this.userId = userId;
+    }
+
     // 대기중인 토큰의 대기 순서를 계산
     public void setPosition(Long id, Long first) {
         if (id > first) {
-            position = Math.toIntExact(id - first) + 1;
+            position = id - first + 1;
         } else {
-            position = 1;
+            position = 1L;
         }
     }
 
@@ -84,8 +93,8 @@ public class Token {
         if (Objects.isNull(position)) throw new CustomException(ErrorCode.TOKEN_NOT_EXIST);
 
         // 현재 시간 + (내 순서 / 처리 시간당 입장 가능한 사람 수) * 놀이기구 한 번당 처리 시간
-        availableAt = LocalDateTime.now().plusMinutes((position / MAX_AVAILABLE_COUNT) * DURATION_MIN);
-        expireAt = this.availableAt.plusMinutes(DURATION_MIN);
+        availableAt = LocalDateTime.now().plusMinutes((position / ACTIVATABLE_COUNT_PER_MIN) * TTL_MIN);
+        expireAt = this.availableAt.plusMinutes(TTL_MIN);
     }
 
     public void updateLastRequestAt(LocalDateTime lastRequestAt) {

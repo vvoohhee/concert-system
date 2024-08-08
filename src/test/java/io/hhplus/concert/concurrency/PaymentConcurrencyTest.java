@@ -36,7 +36,7 @@ public class PaymentConcurrencyTest {
         // 테스트를 위한 데이터 생성
 
         Long userId = 1L;
-        TokenInfo token = userTokenFacade.issueUserToken(userId);
+        TokenInfo token = userTokenFacade.issueWaitingToken(userId);
 
         // 동시성 테스트 시작 - 시작 시간 기록
         Long startTime = System.currentTimeMillis();
@@ -73,7 +73,7 @@ public class PaymentConcurrencyTest {
     public void 결제_충전_동시성_테스트() throws InterruptedException {
         // 테스트를 위한 데이터 생성
         Long userId = 1L;
-        TokenInfo token = userTokenFacade.issueUserToken(userId);
+        TokenInfo token = userTokenFacade.issueWaitingToken(userId);
 
         // 동시성 테스트 시작 - 시작 시간 기록
         Long startTime = System.currentTimeMillis();

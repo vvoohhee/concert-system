@@ -1,17 +1,18 @@
 package io.hhplus.concert.application.concert;
 
-import io.hhplus.concert.common.enums.ErrorCode;
 import io.hhplus.concert.common.exception.CustomException;
 import io.hhplus.concert.domain.concert.ConcertService;
-import io.hhplus.concert.domain.concert.dto.ConcertOptionInfo;
 import io.hhplus.concert.domain.concert.dto.ReservationInfo;
 import io.hhplus.concert.domain.concert.dto.SeatInfo;
+import io.hhplus.concert.domain.concert.model.Concert;
+import io.hhplus.concert.domain.concert.model.ConcertOption;
 import io.hhplus.concert.domain.concert.model.Reservation;
 import io.hhplus.concert.domain.concert.model.Seat;
 import io.hhplus.concert.domain.token.Token;
 import io.hhplus.concert.domain.token.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -25,8 +26,15 @@ public class UserConcertFacade implements UserConcertService {
     private final ConcertService concertService;
 
     @Override
-    public List<ConcertOptionInfo> findConcerts(LocalDateTime reserveAt) {
-        return concertService.findConcerts(reserveAt);
+    public Page<Concert> findConcerts(LocalDateTime reserveAt) {
+        Page<Concert> result =  concertService.findConcertsWithCache(reserveAt);
+        return result;
+    }
+
+
+    @Override
+    public List<ConcertOption> findConcertOptions(Long concertId) {
+        return concertService.findConcertOptions(concertId);
     }
 
     @Override
@@ -39,7 +47,7 @@ public class UserConcertFacade implements UserConcertService {
 
     @Override
     public List<ReservationInfo> reserveSeats(List<Long> seatIdList, String tokenString) {
-        Token token = tokenService.find(tokenString);
+        Token token = tokenService.findActiveToken(tokenString);
         concertService.reserveSeats(seatIdList);
 
         // 좌석 테이블에 비관락을 걸어 예약 상태를 확인 후 좌석을 예약중으로 변경

@@ -8,6 +8,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -38,5 +40,9 @@ public class UserService {
 
     public BalanceHistory saveHistory(SaveBalanceHistoryCommand command) {
         return userRepository.saveHistory(new BalanceHistory(command.balanceId(), command.amount(), command.type()));
+    }
+
+    public Optional<User> findUser(Long userId) {
+        return userRepository.findUserById(userId);
     }
 }
