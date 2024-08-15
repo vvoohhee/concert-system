@@ -1,10 +1,13 @@
 package io.hhplus.concert.domain.payment;
 
+import io.hhplus.concert.common.enums.OutboxStatus;
 import io.hhplus.concert.domain.payment.dto.PaymentHistoryCommand;
 import io.hhplus.concert.domain.payment.event.PaymentSuccessEvent;
 import io.hhplus.concert.domain.payment.event.kafka.PaymentKafkaMessageProducer;
 import io.hhplus.concert.infrastructure.db.payment.PaymentJpaRepository;
 import io.hhplus.concert.infrastructure.db.payment.PaymentOutboxJpaRepository;
+import io.hhplus.concert.interfaces.scheduler.PaymentOutboxScheduler;
+import org.apache.kafka.common.Uuid;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,9 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @EmbeddedKafka(
@@ -36,6 +43,9 @@ public class PaymentMessagingTest {
 
     @Autowired
     private PaymentKafkaMessageProducer paymentKafkaMessageProducer;
+
+    @Autowired
+    private PaymentOutboxScheduler paymentOutboxScheduler;
 
     @BeforeEach
     void setUp() {
@@ -66,5 +76,37 @@ public class PaymentMessagingTest {
         PaymentOutbox outbox = paymentOutboxJpaRepository.findPaymentOutboxByIdentifier(event.getIdentifier());
         assertEquals(event.getIdentifier(), outbox.getIdentifier());
         assertEquals(paymentHistoryCommands.size(), payments.size());
+    }
+
+    @Test
+    @DisplayName("Outbox에서 5분 이상 init 상태로 머물러있는 메시지들에 대해 재시도하는 스케줄러가 정말 동작하는지")
+    void testRetryInitMessagesIsCalled() {
+        await().atMost(6, TimeUnit.MINUTES).untilAsserted(() -> verify(paymentOutboxScheduler).retryInitMessages());
+    }
+
+    @Test
+    @DisplayName("Outbox에서 5분 이상 init 상태로 머물러있는 메시지들에 대해 재시도")
+    void testRetryInitMessagesResult() throws InterruptedException {
+        //given
+        PaymentHistoryCommand command = new PaymentHistoryCommand(1L, 23000);
+        PaymentSuccessEvent event = new PaymentSuccessEvent(List.of(command));
+
+        PaymentOutbox outbox = new PaymentOutbox(
+                PaymentSuccessEvent.topic,
+                event,
+                event.getIdentifier());
+        outbox = paymentOutboxJpaRepository.save(outbox);
+
+        outbox.setCreatedAt(LocalDateTime.now().minusMinutes(100));
+        paymentOutboxJpaRepository.save(outbox);
+
+        // when
+        paymentOutboxScheduler.retryInitMessages();
+        Thread.sleep(3000);
+
+        // then
+        PaymentOutbox updated = paymentOutboxJpaRepository.findPaymentOutboxByIdentifier(event.getIdentifier());
+        assertEquals(OutboxStatus.PUBLISHED, updated.getStatus());
+
     }
 }

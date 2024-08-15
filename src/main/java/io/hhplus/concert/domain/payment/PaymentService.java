@@ -43,10 +43,11 @@ public class PaymentService {
     }
 
     @Transactional
-    public void markOutboxAsPublished(String identifier) {
+    public boolean markOutboxAsPublished(String identifier) {
         PaymentOutbox outbox = paymentRepository.findOutboxByIdentifier(identifier);
         if(outbox == null) throw new CustomException(ErrorCode.NO_SUCH_MESSAGE);
 
         outbox.markAsPublished(); // 변경감지 때문에 save() 메서드 요청할 필요 없음
+        return true;
     }
 }
