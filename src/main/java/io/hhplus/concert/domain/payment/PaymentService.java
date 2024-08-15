@@ -33,9 +33,9 @@ public class PaymentService {
         return tickets;
     }
 
-    public void initOutboxMessage(String topic, Object message, String identifier) {
+    public PaymentOutbox initOutboxMessage(String topic, Object message, String identifier) {
         PaymentOutbox outbox = new PaymentOutbox(topic, message, identifier);
-        paymentRepository.initOutbox(outbox);
+        return paymentRepository.initOutbox(outbox);
     }
 
     public List<PaymentOutbox> findInitOutboxMessages() {
