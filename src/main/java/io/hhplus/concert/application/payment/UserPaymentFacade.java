@@ -1,10 +1,15 @@
 package io.hhplus.concert.application.payment;
 
+import io.hhplus.concert.common.util.ObjectStringConverter;
 import io.hhplus.concert.domain.concert.ConcertService;
 import io.hhplus.concert.domain.concert.dto.SeatPriceInfo;
 import io.hhplus.concert.domain.concert.model.Reservation;
+import io.hhplus.concert.domain.payment.PaymentOutbox;
+import io.hhplus.concert.domain.payment.PaymentService;
 import io.hhplus.concert.domain.payment.Ticket;
 import io.hhplus.concert.domain.payment.dto.TicketInfo;
+import io.hhplus.concert.domain.payment.event.PaymentEventPublisher;
+import io.hhplus.concert.domain.payment.event.PaymentSuccessEvent;
 import io.hhplus.concert.domain.token.Token;
 import io.hhplus.concert.domain.token.TokenService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +25,8 @@ public class UserPaymentFacade implements UserPaymentService {
     private final TokenService tokenService;
     private final ConcertService concertService;
     private final UserPaymentComponent userPaymentComponent;
+    private final PaymentService paymentService;
+    private final PaymentEventPublisher paymentEventPublisher;
 
     @Override
     public List<TicketInfo> billing(String authorization) {
@@ -46,5 +53,29 @@ public class UserPaymentFacade implements UserPaymentService {
                 .stream()
                 .map(ticket -> new TicketInfo(ticket.getId(), ticket.getSeatId(), ticket.getPrice()))
                 .toList();
+    }
+
+    @Override
+    public void retryInitMessages() {
+        List<PaymentOutbox> outboxes =
+                paymentService.findInitOutboxMessages().stream()
+                        .filter(PaymentOutbox::isRetryable)
+                        .toList();
+
+        if (outboxes.isEmpty()) return;
+
+        for (PaymentOutbox outbox : outboxes) {
+            // 지금은 결제 관련 카프카 메시지 토픽이 하나밖에 없어서 간단하게 if문으로 처리함
+            if(outbox.getTopic().equals(PaymentSuccessEvent.topic)) {
+                PaymentSuccessEvent event = ObjectStringConverter.fromJson(outbox.getMessage(), PaymentSuccessEvent.class);
+                paymentEventPublisher.success(event);
+            }
+        }
+    }
+
+    @Override
+    public void markOutboxAsPublished(String identifier) {
+        paymentService.markOutboxAsPublished(identifier);
+
     }
 }
