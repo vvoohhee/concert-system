@@ -1,5 +1,6 @@
 package io.hhplus.concert.domain.payment;
 
+import io.hhplus.concert.common.enums.OutboxStatus;
 import io.hhplus.concert.domain.payment.dto.PaymentHistoryCommand;
 import io.hhplus.concert.domain.payment.event.PaymentSuccessEvent;
 import io.hhplus.concert.domain.payment.event.kafka.PaymentKafkaMessageProducer;
@@ -65,6 +66,7 @@ public class PaymentMessagingTest {
         List<Payment> payments = paymentJpaRepository.findAll();
         PaymentOutbox outbox = paymentOutboxJpaRepository.findPaymentOutboxByIdentifier(event.getIdentifier());
         assertEquals(event.getIdentifier(), outbox.getIdentifier());
+        assertEquals(OutboxStatus.PUBLISHED, outbox.getStatus());
         assertEquals(paymentHistoryCommands.size(), payments.size());
     }
 }
