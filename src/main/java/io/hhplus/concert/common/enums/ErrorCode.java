@@ -16,6 +16,7 @@ public enum ErrorCode {
     RESERVATION_PARTIALLY_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "예약 데이터 등록 일부 실패", LogLevel.ERROR),
     JSON_SERIALIZATION_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "객체를 JSON String으로 직렬화 실패", LogLevel.ERROR),
     REDIS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Redis에서 실패", LogLevel.ERROR),
+    NO_SUCH_MESSAGE(HttpStatus.BAD_REQUEST, "일치하는 메시지가 없음", LogLevel.ERROR),
     UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 에러 발생", LogLevel.ERROR),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "권한 없음", LogLevel.ERROR);
 
