@@ -1,8 +1,8 @@
-package io.hhplus.concert.infrastructure.concert;
+package io.hhplus.concert.infrastructure.db.concert;
 
 import io.hhplus.concert.common.enums.ReservationStatusType;
 import io.hhplus.concert.domain.concert.model.Seat;
-import io.hhplus.concert.infrastructure.concert.dto.SeatPriceProjection;
+import io.hhplus.concert.infrastructure.db.concert.dto.SeatPriceProjection;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;

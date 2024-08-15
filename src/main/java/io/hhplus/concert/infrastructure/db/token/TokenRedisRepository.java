@@ -1,4 +1,4 @@
-package io.hhplus.concert.infrastructure.token;
+package io.hhplus.concert.infrastructure.db.token;
 
 import io.hhplus.concert.common.enums.ErrorCode;
 import io.hhplus.concert.common.exception.CustomException;

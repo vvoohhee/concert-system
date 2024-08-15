@@ -1,17 +1,14 @@
 package io.hhplus.concert.domain.concert;
 
-import com.zaxxer.hikari.HikariDataSource;
 import io.hhplus.concert.application.concert.UserConcertFacade;
-import io.hhplus.concert.domain.concert.dto.ConcertOptionInfo;
 import io.hhplus.concert.domain.concert.dto.ReservationInfo;
 import io.hhplus.concert.domain.concert.dto.SeatInfo;
 import io.hhplus.concert.domain.concert.model.Concert;
 import io.hhplus.concert.domain.concert.model.ConcertOption;
 import io.hhplus.concert.domain.concert.model.Seat;
 import io.hhplus.concert.domain.token.TokenService;
-import io.hhplus.concert.infrastructure.concert.ConcertJpaRepository;
-import io.hhplus.concert.infrastructure.concert.ConcertOptionJpaRepository;
-import lombok.RequiredArgsConstructor;
+import io.hhplus.concert.infrastructure.db.concert.ConcertJpaRepository;
+import io.hhplus.concert.infrastructure.db.concert.ConcertOptionJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,13 +16,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
