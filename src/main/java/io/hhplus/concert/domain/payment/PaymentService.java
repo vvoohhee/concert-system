@@ -1,7 +1,10 @@
 package io.hhplus.concert.domain.payment;
 
-import io.hhplus.concert.common.enums.PaymentStatus;
+import io.hhplus.concert.common.enums.ErrorCode;
+import io.hhplus.concert.common.enums.OutboxStatus;
+import io.hhplus.concert.common.exception.CustomException;
 import io.hhplus.concert.domain.concert.dto.SeatPriceInfo;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,19 +33,21 @@ public class PaymentService {
         return tickets;
     }
 
-    public List<Payment> savePaymentHistories(List<Ticket> ticket) {
+    public PaymentOutbox initOutboxMessage(String topic, Object message, String identifier) {
+        PaymentOutbox outbox = new PaymentOutbox(topic, message, identifier);
+        return paymentRepository.initOutbox(outbox);
+    }
 
-        List<Payment> payments = ticket
-                .stream()
-                .map(t -> new Payment(t.getId(), t.getPrice(), PaymentStatus.PAID))
-                .toList();
+    public List<PaymentOutbox> findInitOutboxMessages() {
+        return paymentRepository.findOutboxesByStatus(OutboxStatus.INIT);
+    }
 
-        try {
-            payments = paymentRepository.savePayments(payments);
-        } catch (Exception e) {
-            log.error("[결제API][유저ID : {}] 결제 정보를 DB에 저장하는 과정에서 알 수 없는 에러 발생", ticket.get(0).getUserId());
-        }
+    @Transactional
+    public boolean markOutboxAsPublished(String identifier) {
+        PaymentOutbox outbox = paymentRepository.findOutboxByIdentifier(identifier);
+        if(outbox == null) throw new CustomException(ErrorCode.NO_SUCH_MESSAGE);
 
-        return payments;
+        outbox.markAsPublished(); // 변경감지 때문에 save() 메서드 요청할 필요 없음
+        return true;
     }
 }

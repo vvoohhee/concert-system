@@ -1,4 +1,4 @@
-package io.hhplus.concert.infrastructure.payment;
+package io.hhplus.concert.infrastructure.db.payment;
 
 import io.hhplus.concert.domain.payment.Ticket;
 import org.springframework.data.jpa.repository.JpaRepository;
