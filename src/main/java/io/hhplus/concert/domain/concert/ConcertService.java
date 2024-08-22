@@ -37,7 +37,7 @@ public class ConcertService {
      */
     @Transactional
     public Page<Concert> findConcerts(LocalDateTime reserveAt) {
-        Pageable pageable = PageRequest.of(0, 30, Sort.by("startAt"));
+        Pageable pageable = PageRequest.of(0, 30, Sort.by("reserveFrom"));
         Page<Concert> concerts = concertRepository.findAvailableConcerts(reserveAt, pageable);
 
         return new RestPage<>(concerts);
@@ -51,7 +51,7 @@ public class ConcertService {
      */
     @Cacheable(cacheNames = CacheNameValue.CONCERTS, key = "#reserveAt", cacheManager = "cacheManager")
     public Page<Concert> findConcertsWithCache(LocalDateTime reserveAt) {
-        Pageable pageable = PageRequest.of(0, 30, Sort.by("startAt"));
+        Pageable pageable = PageRequest.of(0, 30, Sort.by("reserveFrom"));
         Page<Concert> concerts = concertRepository.findAvailableConcerts(reserveAt, pageable);
 
         return new RestPage<>(concerts);
