@@ -52,10 +52,10 @@ public class Token {
     private Long position;
 
     // 한 번에 ACTIVE 상태로 바꿀 수 있는 개수
-    public final static int ACTIVATABLE_COUNT_PER_MIN = 5;
+    public final static int ACTIVATABLE_COUNT_PER_MIN = 50;
 
     // ACTIVE 토큰의 최대 개수
-    public final static int MAX_ACTIVE_LIMIT = 50;
+    public final static int MAX_ACTIVE_LIMIT = 300;
 
     // 사용자의 처리 기간
     public final static long TTL_MIN = 5;
