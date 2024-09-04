@@ -1,20 +1,26 @@
-# hhplus_3rd_concert
-항해플러스 3주차 과제 : 콘서트 예매 서버 구축
+# 콘서트 예매 시스템
+항해 플러스 백엔드 과정에서 개발한 콘서트 예매 시스템입니다. <br>
+TDD와 클린 레이어드 아키텍처 구조를 기반으로 서버를 설계하고 개발했습니다. <br>
+대용량 데이터의 무결성과 성능을 보장하기 위해 동시성 제어, 트랜잭션 관리, 조회 성능 개선 방법을 배워 적용했습니다. <br>
+대용량 트래픽에도 안정적으로 서비스를 운영하기 위해 Redis 자료구조를 활용한 대기열 시스템을 개발하고 Redis 캐싱, Kafka MQ 등의 기술을 사용했습니다. <br>
 
-<br><br>
+<br>
 
-## 설계 문서
+## 개발 문서
 
----
+### 성능 개선을 위한 분석 문서
 
-### 1. 마일스톤
+🔗 ![동시성 제어를 위한 락 전략](https://grand-spoonbill-ff4.notion.site/de84878f029341f4877b2bb2e67a25de) <br> 
+🔗 ![쿼리 성능 개선 일지](https://grand-spoonbill-ff4.notion.site/294764528bd148ea9fedb8123e143301) <br>
+🔗 ![k6 부하 테스트 분석](https://grand-spoonbill-ff4.notion.site/30bf98e0010249049b0239b53a6d7739) <br>
+🔗 ![서비스 확장 설계](https://grand-spoonbill-ff4.notion.site/a0387d5cbf2448dfa0120b52e0b21a3f?pvs=74) <br>
 
-<img width="1402" alt="마일스톤" src="https://github.com/vvoohhee/hhplus_3rd_concert/assets/150509394/9b255ff8-d600-4d19-b466-9867820ce06e">
+### ERD
+(ERD에 표현된 연관 관계는 논리적 연관관를 표현하기 위함이며 물리적으로 FK를 설정하지는 않습니다)
+![ERD_최종](https://github.com/vvoohhee/hhplus_3rd_concert/assets/150509394/3c6b1ba9-a0be-4d84-ac30-1324aab15820)
 
-<br><br>
 
-### 2. 시퀀스 다이어그램
-
+### 시퀀스 다이어그램
 ```mermaid
 sequenceDiagram
     title 콘서트 예약 전 대기열 다이어그램
@@ -186,11 +192,7 @@ sequenceDiagram
 
 <br><br>
 
-### ERD
-
-![ERD_최종](https://github.com/vvoohhee/hhplus_3rd_concert/assets/150509394/3c6b1ba9-a0be-4d84-ac30-1324aab15820)
-
 <br><br>
 ### API 명세서
-링크 🔗 https://grand-spoonbill-ff4.notion.site/API-8f64568b50ab4b159201d2a863838528?pvs=74
+🔗 ![API 명세서](https://grand-spoonbill-ff4.notion.site/API-8f64568b50ab4b159201d2a863838528?pvs=74)
 
